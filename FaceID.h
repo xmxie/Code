@@ -74,7 +74,7 @@ typedef struct {
 		---------
 */
 Mat* GetSamples(string& pathName,bool*& results);//读入样本图
-void Train(Mat* samples,Mat* integralDiagrams);//训练
+void Train(Sample* samples);//训练
 Mat* CalIntegralDiagrams(Mat* samples);//计算样本的积分图 并返回一个矩阵
 Mat LoadSampleWeights(string& sampleWeightPathName);
 

@@ -21,7 +21,7 @@ Mat* CalIntegralDiagrams(Mat* samples){
 	}
 	return intergralMat;
 }
-void Train(Mat* samples, Mat* integralDiagrams) {
+void Train(Sample* samples) {
 	//Model[0-4]
 	//
 	Feature* Features = new Feature[FEATURE_NUM];
