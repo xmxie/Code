@@ -40,8 +40,8 @@ void Train(Sample* samples) {
 			if (Square<minSquare[model] || xSize>MAP_COLS||ySize>MAP_ROWS)//面积过小 或者长高超限就跳出循环
 				break;
 
-			for(int Y = 1; Y<=MAP_ROWS-ySize; Y++)
-				for (int X = 1; X <= MAP_COLS - xSize; X++) {
+			for(int Y = 0; Y<=MAP_ROWS-ySize; Y++)
+				for (int X = 0; X <= MAP_COLS - xSize; X++) {
 					Features[featureNum].factor = factor;
 					Features[featureNum].model = model;
 					Features[featureNum].xSize = xSize;
@@ -49,13 +49,18 @@ void Train(Sample* samples) {
 					Features[featureNum].X = X;
 					Features[featureNum].Y = Y;
 
-					Key_Value keyValues[SAMPLE_NUM];
+					Key_Value* keyValues=new Key_Value[SAMPLE_NUM];
 					switch (model)
 					{
 					case 0: {
+						uchar X_Y,X_YF,X_YFF,XF_Y;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							keyValues[i].value = samples[i].integralDiagram.at<uchar>(X,Y)+ samples[i].integralDiagram.at<uchar>(X+factor, Y+factor)
-								- samples[i].integralDiagram.at<uchar>(X,Y+factor)- samples[i].integralDiagram.at<uchar>(X+factor,Y);
+							X_Y = X+Y ? samples[i].integralDiagram.at<uchar>(X, Y):0;
+							X_YF = X?samples[i].integralDiagram.at<uchar>(X, Y + factor):0;
+							X_YFF = X?samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor):0;
+							XF_Y = Y?samples[i].integralDiagram.at<uchar>(X + factor, Y):0;
+							keyValues[i].value = X_Y+ 2*samples[i].integralDiagram.at<uchar>(X+factor, Y+factor)+ X_YFF-XF_Y
+								- 2*X_YF- samples[i].integralDiagram.at<uchar>(X+factor,Y+2*factor);
 							keyValues[i].key=samples[i].result;
 						}
 					}break;
@@ -74,18 +79,21 @@ void Train(Sample* samples) {
 					default:
 						break;
 					}
-					//vector.sort();
+					sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value < kv2.value; });
 					int min = SAMPLE_NUM;
+					int index = 0;
 					int __SP = 0;
 					int __SN = 0;
 					for (int i = 0; i < SAMPLE_NUM; i++) {
-						//if( [i] isPerson)
-						//	__SP++
-						//else
-						//	__SN++
+						if (keyValues[i].key)
+							__SP++;
+						else __SN++;
 
 					}
-						
+					Features[featureNum].eRate = min / SAMPLE_NUM;
+					Features[featureNum].threshold = keyValues[index].value;
+
+					delete keyValues;
 				}
 		}
 

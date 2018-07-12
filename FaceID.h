@@ -26,6 +26,8 @@ typedef struct {
 	int ySize;
 	int X;
 	int Y;
+	double eRate;
+	int threshold;
 } Feature;
 
 typedef struct {
