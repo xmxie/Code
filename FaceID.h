@@ -20,8 +20,8 @@ using namespace cv;
 #define __TP 1000
 #define __TN 1000
 typedef struct {
-	int model;//ÄÄ¸ö´óÀà
-	int factor;//Ëõ·ÅÒò×Ó
+	int model;//å“ªä¸ªå¤§ç±»
+	int factor;//ç¼©æ”¾å› å­
 	int xSize;
 	int ySize;
 	int X;
@@ -37,7 +37,7 @@ typedef struct {
 
 
 /*
-	------------ÌØÕ÷Ä£°å±ê¼Ç¼°ÆäÍâÃ²-------------
+	------------ç‰¹å¾æ¨¡æ¿æ ‡è®°åŠå…¶å¤–è²Œ-------------
 	0:	(s,t)=(1,2)
 		---------
 		|*******|	
@@ -73,8 +73,9 @@ typedef struct {
 		|***|	|
 		---------
 */
-Sample* GetSamples(string& pathName);//¶ÁÈëÑù±¾Í¼
-void Train(Mat* samples,Mat* integralDiagrams);//ÑµÁ·
-void CalIntegralDiagrams(Sample* samples);//¼ÆËãÑù±¾µÄ»ı·ÖÍ¼ ²¢·µ»ØÒ»¸ö¾ØÕó
+
+Sample* GetSamples(string& pathName);//è¯»å…¥æ ·æœ¬å›¾
+void Train(Sample* samples);//è®­ç»ƒ
+void CalIntegralDiagrams(Sample* samples);//è®¡ç®—æ ·æœ¬çš„ç§¯åˆ†å›¾ å¹¶è¿”å›ä¸€ä¸ªçŸ©é˜µ
 Mat LoadSampleWeights(string& sampleWeightPathName);
 
