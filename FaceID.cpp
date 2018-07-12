@@ -21,7 +21,7 @@ Mat* CalIntegralDiagrams(Mat* samples){
 	}
 	return intergralMat;
 }
-void Train(Mat* samples, Mat* integralDiagrams) {
+void Train(Sample* samples) {
 	//Model[0-4]
 	//
 	Feature* Features = new Feature[FEATURE_NUM];
@@ -83,9 +83,7 @@ void Train(Mat* samples, Mat* integralDiagrams) {
 
 }
 
-Mat* GetSamples(string& pathName, bool*& results) {
-	int imageNumber = 0;
-	string line;
+Sample* GetSamples(string& pathName) {
 	ifstream fin;
 	fin.open(pathName);
 	if (!fin.is_open())
@@ -93,16 +91,12 @@ Mat* GetSamples(string& pathName, bool*& results) {
 		cout << "File is not exit" << endl;
 		abort();
 	}
-	while (fin >> line)
-		imageNumber++;
-	fin.close();
-	Mat *imageSet = new Mat[imageNumber];
-	fin.open(pathName);
+	Sample* imageSet = new Sample[SAMPLE_NUM];
 	string imagePath;
-	for (int i = 0; i < imageNumber; i++)
+	for (int i = 0; i < SAMPLE_NUM; i++)
 	{
-		fin >> imagePath;
-
-		imageSet[i] = imread(imagePath, 0);
+		fin >> imagePath >> imageSet[i].result;
+		imageSet[i].img = imread(imagePath, 0);
 	}
+	return imageSet;
 }
