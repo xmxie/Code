@@ -7,9 +7,10 @@ int main() {
 	Mat* samples;//样本数组
 	Mat*integralDiagrams;//积分图数组
 	Mat sampleWeights;//样本权重矩阵
+	bool* results;
 
 	sampleWeights = LoadSampleWeights(sampleWeightPathName);//加载样本权重
-	samples = GetSamples(samplePathName);//获取样本
+	samples = GetSamples(samplePathName,results);//获取样本
 	integralDiagrams = CalIntegralDiagrams(samples);//计算样本积分图
 	Train(samples, integralDiagrams);//训练样本 期间会更新样本权重以及各强分类器中的弱分类器的权重
 }
