@@ -13,6 +13,7 @@ using namespace std;
 using namespace cv;
 #define MAP_ROWS 100
 #define MAP_COLS 100
+#define SAMPLE_NUM
 #define HARD_CLASSIFIER_STAGES
 
 /*
@@ -52,7 +53,7 @@ using namespace cv;
 		|***|	|
 		---------
 */
-Mat* GetSamples(string& pathName);//读入样本图
+Mat* GetSamples(string& pathName,bool*& results);//读入样本图
 void Train(Mat* samples,Mat* integralDiagram);//训练
 Mat* CalIntegralDiagrams(Mat* samples);//计算样本的积分图 并返回一个矩阵
 Mat LoadSampleWeights(string& sampleWeightPathName);
