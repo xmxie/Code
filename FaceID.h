@@ -13,7 +13,7 @@ using namespace std;
 using namespace cv;
 #define MAP_ROWS 100
 #define MAP_COLS 100
-#define SAMPLE_NUM 0
+#define SAMPLE_NUM 100
 #define HARD_CLASSIFIER_STAGES 1
 #define MODEL_NUM 5
 #define FEATURE_NUM 200000
@@ -34,6 +34,11 @@ typedef struct {
 	bool result;
 	double weight;
 } Sample;
+
+typedef struct {
+	bool key;
+	int value;
+}Key_Value;
 
 
 /*
@@ -77,5 +82,5 @@ typedef struct {
 Sample* GetSamples(string& pathName);//读入样本图
 void Train(Sample* samples);//训练
 void CalIntegralDiagrams(Sample* samples);//计算样本的积分图 并返回一个矩阵
-Mat LoadSampleWeights(string& sampleWeightPathName);
+void LoadSampleWeights(string& sampleWeightPathName,Sample* samples);
 

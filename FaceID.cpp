@@ -28,33 +28,35 @@ void CalIntegralDiagrams(Sample* samples){
 	}
 }
 void Train(Sample* samples) {
-	//Model[0-4]
-	//
 	Feature* Features = new Feature[FEATURE_NUM];
-	int featureNum=0;
+	int featureNum=0;//初始化特征数为0
+
 	for (int model = 0; model < MODEL_NUM; model++) 
 		for (int factor = 1;; factor++) {
 			//判断跳出条件 小于最小面积或者超过图片面积
-			int xSize = factor * s[model];
-			int ySize = factor * t[model];
-			int Square = xSize * ySize;
-			if (Square<minSquare[model] || xSize>MAP_COLS||ySize>MAP_ROWS)
+			int xSize = factor * s[model];//计算窗口长
+			int ySize = factor * t[model];//计算窗口高
+			int Square = xSize * ySize;//计算窗口面积
+			if (Square<minSquare[model] || xSize>MAP_COLS||ySize>MAP_ROWS)//面积过小 或者长高超限就跳出循环
 				break;
-			for(int Y = 0; Y<=MAP_ROWS-ySize; Y++)
-				for (int X = 0; X <= MAP_COLS - xSize; X++) {
+
+			for(int Y = 1; Y<=MAP_ROWS-ySize; Y++)
+				for (int X = 1; X <= MAP_COLS - xSize; X++) {
 					Features[featureNum].factor = factor;
 					Features[featureNum].model = model;
 					Features[featureNum].xSize = xSize;
 					Features[featureNum].ySize = ySize;
 					Features[featureNum].X = X;
 					Features[featureNum].Y = Y;
-					
+
+					Key_Value keyValues[SAMPLE_NUM];
 					switch (model)
 					{
 					case 0: {
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							//Key_Value[i].Value=Samples[i].
-							//Key_Value[i].Key=Samples[i].result;
+							keyValues[i].value = samples[i].integralDiagram.at<uchar>(X,Y)+ samples[i].integralDiagram.at<uchar>(X+factor, Y+factor)
+								- samples[i].integralDiagram.at<uchar>(X,Y+factor)- samples[i].integralDiagram.at<uchar>(X+factor,Y);
+							keyValues[i].key=samples[i].result;
 						}
 					}break;
 					case 1: {
@@ -88,7 +90,6 @@ void Train(Sample* samples) {
 		}
 
 }
-
 Sample* GetSamples(string& pathName) {
 	ifstream fin;
 	fin.open(pathName);
