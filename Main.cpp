@@ -1,7 +1,7 @@
 #include"FaceID.h"
 
 int main() {
-	//以下是定义二维数组用以创建卷积核
+	/*//以下是定义二维数组用以创建卷积核
 	Kernel vertical_edge_kernel = new float*[3];
 	Kernel horizontal_edge_kernel = new float*[3];
 	for (int i = 0; i < 3; i++) {
@@ -43,4 +43,21 @@ int main() {
 	//imshow("Eason", img);
 	waitKey(0);
 	getchar();
+	*/
+	Mat img = imread("Code/1.jpg");
+	Mat gray,mean, dev,After;
+	cvtColor(img, gray, CV_RGB2GRAY);
+	meanStdDev(img, mean, dev);
+	double Mean, Dev;
+	Mean = mean.at<double>(0,0);
+	Dev = dev.at<double>(0,0);
+	cout << "Mean:" << Mean << endl;
+	cout << "Dev:" << Dev << endl;
+	namedWindow("Fuck");
+	for (int i = 0; i < gray.rows; i++)
+		for (int j = 0; j < gray.cols; j++)
+			gray.at<float>(i, j) = ((double)gray.at<uchar>(i, j) - Mean) / Dev;
+	imshow("Fuck", gray);
+	waitKey(0);
+	cin.get();
 }
