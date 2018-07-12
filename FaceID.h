@@ -35,6 +35,7 @@ typedef struct {
 	double weight;
 } Sample;
 
+
 /*
 	------------特征模板标记及其外貌-------------
 	0:	(s,t)=(1,2)
