@@ -13,7 +13,7 @@ using namespace std;
 using namespace cv;
 #define MAP_ROWS 100
 #define MAP_COLS 100
-#define SAMPLE_NUM
+#define SAMPLE_NUM 100
 #define HARD_CLASSIFIER_STAGES
 
 /*
