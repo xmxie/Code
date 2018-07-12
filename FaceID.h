@@ -14,7 +14,26 @@ using namespace cv;
 #define MAP_ROWS 100
 #define MAP_COLS 100
 #define SAMPLE_NUM 0
-#define HARD_CLASSIFIER_STAGES
+#define HARD_CLASSIFIER_STAGES 1
+#define MODEL_NUM 5
+#define FEATURE_NUM 200000
+#define __TP 1000
+#define __TN 1000
+typedef struct {
+	int model;//哪个大类
+	int factor;//缩放因子
+	int xSize;
+	int ySize;
+	int X;
+	int Y;
+} Feature;
+
+typedef struct {
+	Mat img;
+	Mat integralDiagram;
+	bool result;
+	double weight;
+} Sample;
 
 /*
 	------------特征模板标记及其外貌-------------
@@ -54,7 +73,7 @@ using namespace cv;
 		---------
 */
 Mat* GetSamples(string& pathName,bool*& results);//读入样本图
-void Train(Mat* samples,Mat* integralDiagram);//训练
+void Train(Mat* samples,Mat* integralDiagrams);//训练
 Mat* CalIntegralDiagrams(Mat* samples);//计算样本的积分图 并返回一个矩阵
 Mat LoadSampleWeights(string& sampleWeightPathName);
 
