@@ -17,3 +17,27 @@ Mat* CalIntegralDiagrams(Mat* samples){
 	}
 	return intergralMat;
 }
+
+Mat* GetSamples(string& pathName, bool*& results) {
+	int imageNumber = 0;
+	string line;
+	ifstream fin;
+	fin.open(pathName);
+	if (!fin.is_open())
+	{
+		cout << "File is not exit" << endl;
+		abort();
+	}
+	while (fin >> line)
+		imageNumber++;
+	fin.close();
+	Mat *imageSet = new Mat[imageNumber];
+	fin.open(pathName);
+	string imagePath;
+	for (int i = 0; i < imageNumber; i++)
+	{
+		fin >> imagePath;
+
+		imageSet[i] = imread(imagePath, 0);
+	}
+}
