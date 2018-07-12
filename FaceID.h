@@ -11,20 +11,47 @@
 #include<ctime>
 using namespace std;
 using namespace cv;
-typedef float** Kernel;
-
+#define MAP_ROWS 100
+#define MAP_COLS 100
 
 /*
-	------------卷积核对照表-------------
-	所有卷积核文件的命名以"ij.txt"为准
-	i代表第i层
+	------------特征模板标记及其外貌-------------
+	0:	(s,t)=(1,2)
+		---------
+		|*******|	
+		---------
+		|		|
+		---------	
 
+	1:	(s,t)=(2,1)
+		---------
+		|	|***|
+		|	|***|
+		---------
+	
+	2:	(s,t)=(1,3)
+		---------
+		|		|
+		---------
+		|*******|	
+		---------
+		|		|
+		---------	
 
+	3.	(s,t)=(3,1)
+		-------------
+		|	|***|	|
+		|	|***|	|
+		-------------
 
+	4.	(s,t)=(2,2)
+		---------
+		|	|***|
+		---------
+		|***|	|
+		---------
 */
-Mat generateConvKernel(int scale, Kernel def);//生成一个自定义的卷积核
-Mat maxPooling(Mat ingredient, int grid, int step);//进行一次最大池化
-void compareCharacter(Mat m1, Mat m2,int factor);
-
-
+bool GetSamples(string& pathName);//读入样本图
+void Train(Mat* samples,Mat* integralDiagram);//训练
+Mat* calIntegralDiagram(Mat* samples);//计算样本的积分图 并返回一个矩阵
 
