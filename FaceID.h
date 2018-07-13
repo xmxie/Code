@@ -88,7 +88,6 @@ typedef struct {
 		|***|	|
 		---------
 */
-
 Sample* GetSamples(string& posPathName,string& negPathName);//读入样本图
 void Train(Sample* samples);//训练
 Key_Value* CalFeatureValue(Sample* samples, Feature& feature);
@@ -96,4 +95,5 @@ void CalIntegralDiagrams(Sample* samples);//计算样本的积分图 并返回�
 ostream& operator<<(ostream& os, Feature& feature);
 void StoreClassifier(ofstream& fout, Feature* allFeatures, ER_Number* ERtable);
 void UpdateSampleWeight(Sample* samples,Feature& bestFeature);
+
 
