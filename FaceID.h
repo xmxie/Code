@@ -101,3 +101,4 @@ void CalFeatureMinErrorRate();
 Feature& StoreClassifier(int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
 
+
