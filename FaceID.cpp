@@ -27,19 +27,16 @@ void CalIntegralDiagrams(){
 void GenerateFeatures() {
 	int xSize, ySize, Square;
 	for (int model = 0; model < MODEL_NUM; model++) {
-		printf("开始处理模型%d\n", model);
 		for (int factor = 1;; factor++) {
 			//判断跳出条件 小于最小面积或者超过图片面积
 			xSize = factor * s[model];//计算窗口长
 			ySize = factor * t[model];//计算窗口高
 			Square = xSize * ySize;//计算窗口面积
 			if (xSize > MAP_COLS || ySize > MAP_ROWS) {//面积过小 或者长高超限就跳出循环
-				printf("重置放大因子\n");
 				break;
 			}
 			else if (Square < minSquare[model])
 				continue;
-			printf("放大因子为%d\n", factor);
 			for (int Y = 0; Y <= MAP_ROWS - ySize; Y++)
 				for (int X = 0; X <= MAP_COLS - xSize; X++) {
 					Features[featureNum].factor = factor;
@@ -103,6 +100,8 @@ void Train() {
 		for (int curWeakClassifierNum = 0; curWeakClassifierNum < weakClassifierNum[stage]; curWeakClassifierNum++) {
 			CalFeatureMinErrorRate();
 			sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.errorRate < ern2.errorRate; });
+			for (int i = 0; i < featureNum; i++)
+				cout << ERtable[i].errorRate << endl;
 			Feature& CurBestFeature = StoreClassifier(curWeakClassifierNum, stage);
 			UpdateSampleWeight(CurBestFeature);	
 		}
@@ -220,12 +219,14 @@ Key_Value* CalFeatureValue(Feature& feature) {
 	return keyValues;
 }
 ostream& operator<<(ostream& os, Feature& feature) {
-	os << "模型: " << feature.model<<endl
-		<<"放大倍数: "<<feature.factor<<endl
-		<<"左上角位置: "<<"("<<feature.X<<","<<feature.Y<<")"<<endl
-		<<"错误率: "<<feature.eRate<<endl
-		<<"阈值："<<feature.threshold<<endl
-		<<"符号："<<feature.p<<endl;
+	os << "模型: " << feature.model << endl
+		<< "放大倍数: " << feature.factor << endl
+		<< "左上角位置: " << "(" << feature.X << "," << feature.Y << ")" << endl
+		<< "错误率: " << feature.eRate << endl
+		<<"权重系数: "<< log((1 - feature.eRate) / feature.eRate) / 2
+		<< "阈值：" << feature.threshold << endl
+		<< "符号：" << feature.p << endl
+		<< "编号：" << feature.Number << endl;
 	return os;
 }
 ofstream& operator<<(ofstream& fout, Feature& feature) {
@@ -243,11 +244,11 @@ Feature& StoreClassifier(int& curWeakClassifierNum,int stage) {
 			}
 		if (ok) {
 			index = ERtable[i].Number;
-			Factor[stage][curWeakClassifierNum++] = Features[index];
+			Factor[stage][curWeakClassifierNum] = Features[index];
 			break;
 		}
 	}
-	cout << Features[index]<<endl;
+	cout << "第"<< curWeakClassifierNum +1<<"个"<<Features[index]<<endl;
 	//fout << Features[index];
 	return Features[index];
 }
@@ -271,7 +272,6 @@ void UpdateSampleWeight(Feature& bestFeature) {
 			curTP += samples[i].weight;
 		else
 			curTN += samples[i].weight;
-		cout << samples[i].weight << endl;
 	}
 	delete[] keyValues;
 }
