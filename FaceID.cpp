@@ -32,8 +32,12 @@ void Train(Sample* samples) {
 	Feature* Features = new Feature[FEATURE_NUM];
 	ER_Number* ERtable = new ER_Number[FEATURE_NUM];
 	int featureNum=0;//初始化特征数为0
+	double curTP = (double)__TP / SAMPLE_NUM;
+	double curTN = (double)__TN / SAMPLE_NUM;
+	ofstream Fout("classifiers.txt");
 
 	for (int model = 0; model < MODEL_NUM; model++) {
+		Feature CurBestFeature;
 		printf("开始处理模型%d\n", model);
 		for (int factor = 1;; factor++) {
 			//判断跳出条件 小于最小面积或者超过图片面积
@@ -56,6 +60,7 @@ void Train(Sample* samples) {
 					Features[featureNum].X = X;
 					Features[featureNum].Y = Y;
 
+<<<<<<< HEAD
 					Key_Value* keyValues = new Key_Value[SAMPLE_NUM];
 					switch (model)
 					{
@@ -125,17 +130,20 @@ void Train(Sample* samples) {
 					default:
 						break;
 					}
+=======
+					Key_Value* keyValues = CalFeatureValue(samples, Features[featureNum]);
+>>>>>>> 褰ぉ绁ョ殑姝ｅ湪瀹屽杽閮ㄥ垎
 					sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value > kv2.value; });
-					int minWrong = SAMPLE_NUM;
-					int __SP = 0;
-					int __SN = 0;
-					int wrong10, wrong01;
+					double minWrong = SAMPLE_NUM;
+					double __SP = 0;
+					double __SN = 0;
+					double wrong10, wrong01;
 					for (int i = 0; i < SAMPLE_NUM; i++) {
 						if (keyValues[i].key)
-							__SP++;
-						else __SN++;
-						wrong10 = __SN + __TP - __SP;
-						wrong01 = __SP + __TN - __SN;
+							__SP+=keyValues[i].weight;
+						else __SN += keyValues[i].weight;
+						wrong10 = __SN + curTP - __SP;
+						wrong01 = __SP + curTN - __SN;
 						if (wrong10 < minWrong&&wrong10 < wrong01) {
 							minWrong = wrong10;
 							Features[featureNum].p = 1;
@@ -154,10 +162,17 @@ void Train(Sample* samples) {
 					delete[] keyValues;
 				}
 		}
+		sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.Number < ern2.Number; });
+		cout << Features[ERtable[0].Number];
+		CurBestFeature=StoreClassifier(Fout, Features, ERtable);
+		UpdateSampleWeight(samples,);
 	}
+<<<<<<< HEAD
 	sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.errorRate < ern2.errorRate; });
 	cout << Features[ERtable[0].Number];
 	cin.get();
+=======
+>>>>>>> 褰ぉ绁ョ殑姝ｅ湪瀹屽杽閮ㄥ垎
 }
 Sample* GetSamples(string& posPathName, string& negPathName) {
 	ifstream fin; 
@@ -173,7 +188,7 @@ Sample* GetSamples(string& posPathName, string& negPathName) {
 	{
 		fin >> imagePath >> imageSet[i].result;
 		imageSet[i].img = imread(imagePath, 0);
-		imageSet[i].weight = 1 / SAMPLE_NUM;
+		imageSet[i].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
 	fin.open(negPathName);
@@ -186,10 +201,87 @@ Sample* GetSamples(string& posPathName, string& negPathName) {
 	{
 		fin >> imagePath >> imageSet[j].result;
 		imageSet[j].img = imread(imagePath,0);
-		imageSet[j].weight = 1 / SAMPLE_NUM;
+		imageSet[j].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
 	return imageSet;
+}
+Key_Value* CalFeatureValue(Sample* samples, Feature& feature) {
+	Key_Value* keyValues = new Key_Value[SAMPLE_NUM];
+	switch (feature.model)
+	{
+	case 0: {
+		int  X_Y, X_YF, X_YFF, XF_Y;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			X_YFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			keyValues[i].value = X_Y + 2 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1) + X_YFF - XF_Y
+				- 2 * X_YF - samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 2 * feature.factor-1);
+			keyValues[i].key = samples[i].result;
+			keyValues[i].weight = samples[i].weight;
+		}
+	}break;
+	case 1: {
+		int  X_Y, X_YF, XF_Y, XFF_Y;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			XFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y) : 0;
+			keyValues[i].value = X_YF + 2 * XF_Y + samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + feature.factor-1)
+				- X_Y - 2 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1) - XFF_Y;
+			keyValues[i].key = samples[i].result;
+			keyValues[i].weight = samples[i].weight;
+		}
+	}break;
+	case 2: {
+		int  X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			X_YFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor-1) : 0;
+			X_YFFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 3 * feature.factor-1) : 0;
+			keyValues[i].value = 3 * X_YF + XF_Y + X_YFFF + 3 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 2 * feature.factor-1)
+				- X_Y - 3 * X_YFF - samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 3 * feature.factor-1) - 3 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1);
+			keyValues[i].key = samples[i].result;
+			keyValues[i].weight = samples[i].weight;
+		}
+	}break;
+	case 3: {
+		int  X_Y, X_YF, XF_Y, XFF_Y, XFFF_Y;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			XFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y) : 0;
+			XFFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 3 * feature.factor-1, feature.Y) : 0;
+			keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + feature.factor-1)
+				- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<int >(feature.X + 3 * feature.factor-1, feature.Y + feature.factor-1) - 3 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1);
+			keyValues[i].key = samples[i].result;
+			keyValues[i].weight = samples[i].weight;
+		}
+	}break;
+	case 4: {
+		int  X_Y, X_YF, XF_Y, XFF_Y, X_YFF;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			XFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y) : 0;
+			X_YFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor-1) : 0;
+			keyValues[i].value = 2 * XF_Y + 2 * X_YF + 2 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 2 * feature.factor-1) + 2 * samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + feature.factor-1)
+				- X_Y - X_YFF - XFF_Y - 4 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1) - samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + 2 * feature.factor-1);
+			keyValues[i].key = samples[i].result;
+			keyValues[i].weight = samples[i].weight;
+		}
+	}break;
+	default:
+		break;
+	}
+	return keyValues;
 }
 ostream& operator<<(ostream& os, Feature& feature) {
 	os << "模型: " << feature.model<<endl
@@ -200,4 +292,17 @@ ostream& operator<<(ostream& os, Feature& feature) {
 		<<"符号："<<feature.p<<endl;
 	return os;
 }
+Feature& StoreClassifier(ofstream& fout, Feature* allFeatures, ER_Number* ERtable) {
+
+}
+void UpdateSampleWeight(Sample* samples,Feature& bestFeature) {
+	Key_Value* keyValues = CalFeatureValue(samples, bestFeature);
+	double Alpha = log((1 - bestFeature.eRate) / bestFeature.eRate) / 2;
+	for (int i = 0; i < SAMPLE_NUM; i++) {
+		bool predictIsTrue = ((bestFeature.p*keyValues[i].value >= bestFeature.p*bestFeature.threshold)==keyValues[i].key);
+		if(predictIsTrue)
+
+	}
+}
+
 
