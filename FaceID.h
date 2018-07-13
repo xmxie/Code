@@ -90,7 +90,7 @@ typedef struct {
 		---------
 */
 
-Sample* GetSamples();//读入样本图
+void GetSamples();//读入样本图
 void Train();//训练
 Key_Value* CalFeatureValue(Feature& feature);
 void CalIntegralDiagrams();//计算样本的积分图 并返回一个矩阵
