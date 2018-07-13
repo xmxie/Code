@@ -48,6 +48,7 @@ void GenerateFeatures() {
 					Features[featureNum].ySize = ySize;
 					Features[featureNum].X = X;
 					Features[featureNum].Y = Y;
+					Features[featureNum].Number = featureNum;
 					featureNum++;
 				}
 		}
@@ -58,30 +59,34 @@ void CalFeatureMinErrorRate(){
 	Key_Value* keyValues;
 	double minWrong;
 	double __SP,__SN,wrong10, wrong01;
-	for (int i = 0; i < featureNum; i++) {
-		keyValues = CalFeatureValue(Features[i]);
+	for (int fIndex = 0; fIndex < featureNum; fIndex++) {
+		keyValues = CalFeatureValue(Features[fIndex]);
 		sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value > kv2.value; });
 		minWrong = 1;
 		__SP =__SN = 0;
-		for (int i = 0; i < SAMPLE_NUM; i++) {
-			if (keyValues[i].key)
-				__SP += keyValues[i].weight;
-			else __SN += keyValues[i].weight;
+		for (int sIndex = 0; sIndex < SAMPLE_NUM; sIndex++) {
+			if (keyValues[sIndex].key)
+				__SP += keyValues[sIndex].weight;
+			else __SN += keyValues[sIndex].weight;
 			wrong10 = __SN + curTP - __SP;
 			wrong01 = __SP + curTN - __SN;
+			if (wrong10 < 0)
+				wrong10 = 0;
+			if (wrong01 < 0)
+				wrong01 = 0;
 			if (wrong10 < minWrong&&wrong10 < wrong01) {
 				minWrong = wrong10;
-				Features[i].p = 1;
-				Features[i].threshold = keyValues[i].value;
+				Features[fIndex].p = 1;
+				Features[fIndex].threshold = keyValues[sIndex].value;
 			}
 			else if (wrong01 < minWrong&&wrong01 < wrong10) {
 				minWrong = wrong01;
-				Features[i].p = -1;
-				Features[i].threshold = keyValues[i].value;
+				Features[fIndex].p = -1;
+				Features[fIndex].threshold = keyValues[sIndex].value;
 			}
 		}
-		ERtable[i].errorRate = Features[i].eRate = minWrong;
-		ERtable[i].Number = i;
+		ERtable[fIndex].errorRate = Features[fIndex].eRate = minWrong;
+		ERtable[fIndex].Number = fIndex;
 		delete[] keyValues;
 	}
 }
@@ -237,8 +242,8 @@ Feature& StoreClassifier(int& curWeakClassifierNum,int stage) {
 				break;
 			}
 		if (ok) {
-			index = i;
-			Factor[stage][curWeakClassifierNum++] = Features[ERtable[i].Number];
+			index = ERtable[i].Number;
+			Factor[stage][curWeakClassifierNum++] = Features[index];
 			break;
 		}
 	}
@@ -266,6 +271,7 @@ void UpdateSampleWeight(Feature& bestFeature) {
 			curTP += samples[i].weight;
 		else
 			curTN += samples[i].weight;
+		cout << samples[i].weight << endl;
 	}
 	delete[] keyValues;
 }

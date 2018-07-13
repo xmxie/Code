@@ -14,39 +14,39 @@ using namespace std;
 using namespace cv;
 #define MAP_ROWS 20
 #define MAP_COLS 20
-#define SAMPLE_NUM 200
+#define SAMPLE_NUM 2000
 #define HARD_CLASSIFIER_STAGES 1
 #define MAX_WEAK_CLASSIFIER_NUM_PER_HARD 20
 #define MODEL_NUM 5
 #define FEATURE_NUM 200000
-#define __TP 100
-#define __TN 100
+#define __TP 1000
+#define __TN 1000
 typedef struct {
+	//以下是不随迭代变化的量
 	int model;//哪个大类
 	int factor;//缩放因子
-	int xSize;
-	int ySize;
-	int X;
-	int Y;
-	double eRate;
-	int threshold;
-	int p;
-	int Number;
-} Feature;
+	int xSize;//x方向大小
+	int ySize;//y方向大小
+	int X;//左上角的X坐标
+	int Y;//左上角的Y坐标
+	int Number;//在所有特征中的编号
 
+	//以下是在每次迭代中值不同的量
+	double eRate;//该特征在阈值下的错误率
+	int threshold;//该特征的当前阈值
+	int p;//指示不等号的方向
+} Feature;
 typedef struct {
 	Mat img;
 	Mat integralDiagram;
 	bool result;
 	double weight;
 } Sample;
-
 typedef struct {
 	bool key;
 	int value;
 	double weight;
-}Key_Value;
-
+} Key_Value;
 typedef struct {
 	double errorRate;
 	int Number;
