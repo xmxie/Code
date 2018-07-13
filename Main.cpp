@@ -1,8 +1,8 @@
 #include"FaceID.h"
 
 int main() {
-	string samplePathName="Code/";//样本路径名
-	string sampleWeightPathName;//样本权重路径名
+	string posPathName; //正样本路径名
+	string negPathName;//负样本路径名
 	string* classifierPathName;//各级强分类器中的弱分类器权重路径名数组
 	Sample* samples;//样本数组
 

@@ -150,7 +150,7 @@ void Train(Sample* samples) {
 	sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.Number < ern2.Number; });
 
 }
-Sample* GetSamples(string& pathName) {
+Sample* GetSamples(string& posPathName, string& negPathName) {
 	ifstream fin;
 	fin.open(pathName);
 	if (!fin.is_open())
