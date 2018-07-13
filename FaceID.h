@@ -28,6 +28,7 @@ typedef struct {
 	int Y;
 	double eRate;
 	int threshold;
+	int p;
 } Feature;
 
 typedef struct {
@@ -42,8 +43,13 @@ typedef struct {
 	int value;
 }Key_Value;
 
+typedef struct {
+	double errorRate;
+	int Number;
+} ER_Number;
 
-/*
+
+/* 
 	------------特征模板标记及其外貌-------------
 	0:	(s,t)=(1,2)
 		---------
@@ -84,5 +90,4 @@ typedef struct {
 Sample* GetSamples(string& pathName);//读入样本图
 void Train(Sample* samples);//训练
 void CalIntegralDiagrams(Sample* samples);//计算样本的积分图 并返回一个矩阵
-void LoadSampleWeights(string& sampleWeightPathName,Sample* samples);
 
