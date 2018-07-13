@@ -275,27 +275,28 @@ void UpdateSampleWeight(Feature& bestFeature) {
 	delete[] keyValues;
 }
 
-void DrawRectangle(Feature feature, Sample image){
+void DrawRectangle(Feature feature, Sample image) {
 	switch (feature.model) {
 	case(0): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, count,count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, count, count), 1, 0, 1, 0);
 		break; }
-	case(1):{
+	case(1): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 2*count,count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, count), 1, 0, 1, 0);
 		break; }
-	case(2):{
+	case(2): {
 		for (int count = 1; count <= feature.factor; count++)
-		rectangle(image.img, Rect(feature.X, feature.Y, count, 3 * count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, count, 3 * count), 1, 0, 1, 0);
 		break; }
-	case(3):{
+	case(3): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 3*count, count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, 3 * count, count), 1, 0, 1, 0);
 		break; }
-	case(4):{
+	case(4): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 2*count, 2 * count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, 2 * count), 1, 0, 1, 0);
 		break; }
+	}
 }
 
