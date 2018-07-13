@@ -10,6 +10,8 @@
 #include<amp_math.h>
 #include <algorithm>
 #include<ctime>
+#include<stdlib.h> 
+#include<string>
 using namespace std;
 using namespace cv;
 #define MAP_ROWS 20
@@ -100,5 +102,5 @@ ofstream& operator<<(ofstream& fout, Feature& feature);
 void CalFeatureMinErrorRate();
 Feature& StoreClassifier(int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
-void DrawRectangle(Feature& feature,Sample image)
+void DrawRectangle(Feature& feature,Sample&image)
 

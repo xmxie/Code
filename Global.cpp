@@ -1,5 +1,4 @@
 #include"FaceID.h"
-#include"Global.h"
 
 Feature** Factor;//各级强分类器中各弱分类器的当时副本
 int weakClassifierNum[HARD_CLASSIFIER_STAGES] = { 20 };
