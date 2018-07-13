@@ -8,17 +8,18 @@
 #include<vector>
 #include <amp.h>
 #include<amp_math.h>
+#include <algorithm>
 #include<ctime>
 using namespace std;
 using namespace cv;
 #define MAP_ROWS 100
 #define MAP_COLS 100
-#define SAMPLE_NUM 2000
+#define SAMPLE_NUM 200
 #define HARD_CLASSIFIER_STAGES 1
 #define MODEL_NUM 5
 #define FEATURE_NUM 200000
-#define __TP 1000
-#define __TN 1000
+#define __TP 100
+#define __TN 100
 typedef struct {
 	int model;//哪个大类
 	int factor;//缩放因子
@@ -90,4 +91,5 @@ typedef struct {
 Sample* GetSamples(string& posPathName,string& negPathName);//读入样本图
 void Train(Sample* samples);//训练
 void CalIntegralDiagrams(Sample* samples);//计算样本的积分图 并返回一个矩阵
+ostream& operator<<(ostream& os, Feature& feature);
 

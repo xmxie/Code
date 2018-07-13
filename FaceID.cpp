@@ -32,16 +32,19 @@ void Train(Sample* samples) {
 	ER_Number* ERtable = new ER_Number[FEATURE_NUM];
 	int featureNum=0;//初始化特征数为0
 
-	for (int model = 0; model < MODEL_NUM; model++) 
+	for (int model = 0; model < MODEL_NUM; model++) {
+		printf("开始处理模型%d\n", model);
 		for (int factor = 1;; factor++) {
 			//判断跳出条件 小于最小面积或者超过图片面积
 			int xSize = factor * s[model];//计算窗口长
 			int ySize = factor * t[model];//计算窗口高
 			int Square = xSize * ySize;//计算窗口面积
-			if (Square<minSquare[model] || xSize>MAP_COLS||ySize>MAP_ROWS)//面积过小 或者长高超限就跳出循环
+			if (Square<minSquare[model] || xSize>MAP_COLS || ySize > MAP_ROWS) {//面积过小 或者长高超限就跳出循环
+				printf("重置放大因子\n");
 				break;
-
-			for(int Y = 0; Y<=MAP_ROWS-ySize; Y++)
+			}
+			printf("放大因子为%d\n", factor);
+			for (int Y = 0; Y <= MAP_ROWS - ySize; Y++)
 				for (int X = 0; X <= MAP_COLS - xSize; X++) {
 					Features[featureNum].factor = factor;
 					Features[featureNum].model = model;
@@ -50,43 +53,43 @@ void Train(Sample* samples) {
 					Features[featureNum].X = X;
 					Features[featureNum].Y = Y;
 
-					Key_Value* keyValues=new Key_Value[SAMPLE_NUM];
+					Key_Value* keyValues = new Key_Value[SAMPLE_NUM];
 					switch (model)
 					{
 					case 0: {
-						uchar X_Y,X_YF,X_YFF,XF_Y;
+						uchar X_Y, X_YF, X_YFF, XF_Y;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							X_Y = X+Y ? samples[i].integralDiagram.at<uchar>(X, Y):0;
-							X_YF = X?samples[i].integralDiagram.at<uchar>(X, Y + factor):0;
-							X_YFF = X?samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor):0;
-							XF_Y = Y?samples[i].integralDiagram.at<uchar>(X + factor, Y):0;
-							keyValues[i].value = X_Y+ 2*samples[i].integralDiagram.at<uchar>(X+factor, Y+factor)+ X_YFF-XF_Y
-								- 2*X_YF- samples[i].integralDiagram.at<uchar>(X+factor,Y+2*factor);
-							keyValues[i].key=samples[i].result;
+							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
+							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
+							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor) : 0;
+							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
+							keyValues[i].value = X_Y + 2 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) + X_YFF - XF_Y
+								- 2 * X_YF - samples[i].integralDiagram.at<uchar>(X + factor, Y + 2 * factor);
+							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					case 1: {
-						uchar X_Y, X_YF, XF_Y,XFF_Y; 
+						uchar X_Y, X_YF, XF_Y, XFF_Y;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
 							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
 							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
 							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							XFF_Y= Y ? samples[i].integralDiagram.at<uchar>(X + 2*factor, Y) : 0;
+							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y) : 0;
 							keyValues[i].value = X_YF + 2 * XF_Y + samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
 								- X_Y - 2 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) - XFF_Y;
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					case 2: {
-						uchar X_Y, X_YF, XF_Y, X_YFF,X_YFFF;
+						uchar X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
 							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
 							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
 							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X , Y + 2 * factor) : 0;
+							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor) : 0;
 							X_YFFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 3 * factor) : 0;
-							keyValues[i].value = 3*X_YF + XF_Y+X_YFFF + 3*samples[i].integralDiagram.at<uchar>(X +  factor, Y + 2*factor)
-								- X_Y - 3*X_YFF- samples[i].integralDiagram.at<uchar>(X + factor, Y +3* factor)-3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) ;
+							keyValues[i].value = 3 * X_YF + XF_Y + X_YFFF + 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + 2 * factor)
+								- X_Y - 3 * X_YFF - samples[i].integralDiagram.at<uchar>(X + factor, Y + 3 * factor) - 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
@@ -96,10 +99,10 @@ void Train(Sample* samples) {
 							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
 							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
 							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y ) : 0;
+							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y) : 0;
 							XFFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 3 * factor, Y) : 0;
-							keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<uchar>(X + 2*factor, Y +  factor)
-								- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<uchar>(X + 3*factor, Y + factor) - 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor);
+							keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
+								- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<uchar>(X + 3 * factor, Y + factor) - 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
@@ -110,16 +113,16 @@ void Train(Sample* samples) {
 							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
 							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
 							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y) : 0;
-							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X , Y + 2 * factor) : 0;
-							keyValues[i].value = 2 * XF_Y + 2*X_YF + 2 * samples[i].integralDiagram.at<uchar>(X +  factor, Y + 2 * factor) + 2 * samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
-								- X_Y -X_YFF- XFF_Y - 4*samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) -  samples[i].integralDiagram.at<uchar>(X + 2*factor, Y + 2*factor);
+							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor) : 0;
+							keyValues[i].value = 2 * XF_Y + 2 * X_YF + 2 * samples[i].integralDiagram.at<uchar>(X + factor, Y + 2 * factor) + 2 * samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
+								- X_Y - X_YFF - XFF_Y - 4 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) - samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + 2 * factor);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					default:
 						break;
 					}
-					sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value < kv2.value; });
+					sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value > kv2.value; });
 					int minWrong = SAMPLE_NUM;
 					int __SP = 0;
 					int __SN = 0;
@@ -130,7 +133,7 @@ void Train(Sample* samples) {
 						else __SN++;
 						wrong10 = __SN + __TP - __SP;
 						wrong01 = __SP + __TN - __SN;
-						if (wrong10 < minWrong&&wrong10 < wrong01){
+						if (wrong10 < minWrong&&wrong10 < wrong01) {
 							minWrong = wrong10;
 							Features[featureNum].p = 1;
 							Features[featureNum].threshold = keyValues[i].value;
@@ -141,14 +144,15 @@ void Train(Sample* samples) {
 							Features[featureNum].threshold = keyValues[i].value;
 						}
 					}
-					ERtable[featureNum].errorRate=Features[featureNum].eRate =  (double)minWrong/ SAMPLE_NUM;
+					ERtable[featureNum].errorRate = Features[featureNum].eRate = (double)minWrong / SAMPLE_NUM;
 					ERtable[featureNum].Number = featureNum;
 					featureNum++;
 					delete[] keyValues;
 				}
 		}
+	}
 	sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.Number < ern2.Number; });
-
+	cout << Features[ERtable[0].Number];
 }
 Sample* GetSamples(string& posPathName, string& negPathName) {
 	ifstream fin; 
@@ -176,9 +180,19 @@ Sample* GetSamples(string& posPathName, string& negPathName) {
 	for (int j = __TP ; j < __TP + __TN; j++)
 	{
 		fin >> imagePath >> imageSet[j].result;
-		imageSet[j].img = imread(imagePath, 0);
+		imageSet[j].img = imread(imagePath,0);
 		imageSet[j].weight = 1 / SAMPLE_NUM;
 	}
 	fin.close();
 	return imageSet;
 }
+ostream& operator<<(ostream& os, Feature& feature) {
+	os << "模型: " << feature.model<<endl
+		<<"放大倍数: "<<feature.factor<<endl
+		<<"左上角位置: "<<"("<<feature.X<<","<<feature.Y<<")"<<endl
+		<<"错误率: "<<feature.eRate<<endl
+		<<"阈值："<<feature.threshold<<endl
+		<<"符号："<<feature.p<<endl;
+	return os;
+}
+
