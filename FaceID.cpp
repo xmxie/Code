@@ -91,7 +91,7 @@ Mat* GetSamples(string& pathName, bool*& results) {
 	if (!fin.is_open())
 	{
 		cout << "File is not exit" << endl;
-		abort();
+		abort();	
 	}
 	while (fin >> line)
 		imageNumber++;
@@ -102,7 +102,6 @@ Mat* GetSamples(string& pathName, bool*& results) {
 	for (int i = 0; i < imageNumber; i++)
 	{
 		fin >> imagePath;
-
 		imageSet[i] = imread(imagePath, 0);
 	}
 }
