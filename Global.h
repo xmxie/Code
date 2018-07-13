@@ -14,6 +14,8 @@ extern double curTP;
 extern double curTN;
 extern string posPathName;
 extern string negPathName;
+extern string classifierPathName;
+
 
 
 

@@ -88,15 +88,15 @@ void CalFeatureMinErrorRate(){
 		delete[] keyValues;
 	}
 }
-void Train() {
+void InitialSomeVariable() {
 	Features = new Feature[FEATURE_NUM];
 	ERtable = new ER_Number[FEATURE_NUM];
 	Factor = new Feature*[HARD_CLASSIFIER_STAGES];
 	for (int i = 0; i < HARD_CLASSIFIER_STAGES; i++)
 		Factor[i] = new Feature[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
-	ofstream fout("classifiers.txt");
-
-	GenerateFeatures();
+}
+void Train(){ 
+	ofstream fout(classifierPathName.c_str());
 	for (int stage = 0; stage < HARD_CLASSIFIER_STAGES; stage++) {
 		for (int curWeakClassifierNum = 0; curWeakClassifierNum < weakClassifierNum[stage]; curWeakClassifierNum++) {
 			CalFeatureMinErrorRate();
@@ -221,10 +221,10 @@ ostream& operator<<(ostream& os, Feature& feature) {
 		<< "放大倍数: " << feature.factor << endl
 		<< "左上角位置: " << "(" << feature.X << "," << feature.Y << ")" << endl
 		<< "错误率: " << feature.eRate << endl
-		<<"权重系数: "<< log((1 - feature.eRate) / feature.eRate) / 2
-		<< "阈值：" << feature.threshold << endl
-		<< "符号：" << feature.p << endl
-		<< "编号：" << feature.Number << endl;
+		<< "权重系数: " << log((1 - feature.eRate) / feature.eRate) / 2
+		<< "阈值：" << feature.threshold << endl;
+		//<< "符号：" << feature.p << endl
+		//<< "编号：" << feature.Number << endl;
 	return os;
 }
 ofstream& operator<<(ofstream& fout, Feature& feature) {
@@ -238,6 +238,20 @@ ofstream& operator<<(ofstream& fout, Feature& feature) {
 		<< setw(3) << feature.p
 		<< endl;
 	return fout;
+}
+ifstream& operator>>(ifstream& fin, Feature& feature) {
+	double tmp;
+	fin >> feature.model
+		>> feature.factor
+		>> feature.X
+		>> feature.Y
+		>> feature.eRate
+		>>tmp
+		>>feature.threshold
+		>>feature.p;
+	feature.xSize = s[feature.model] * feature.factor;
+	feature.ySize = t[feature.model] * feature.factor;
+	return fin;
 }
 Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage) {
 	int index;
@@ -254,7 +268,7 @@ Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage) {
 			break;
 		}
 	}
-	cout << "第"<< curWeakClassifierNum +1<<"个"<<endl<<Features[index]<<endl;
+	//cout << "第"<< curWeakClassifierNum +1<<"个"<<endl<<Features[index]<<endl;
 	fout << Features[index];
 	return Features[index];
 }

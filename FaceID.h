@@ -110,8 +110,10 @@ void CalIntegralDiagrams();//计算样本的积分图 并返回一个矩阵
 void GenerateFeatures();
 ostream& operator<<(ostream& os, Feature& feature);
 ofstream& operator<<(ofstream& fout, Feature& feature);
+ifstream& operator>>(ifstream& fin, Feature& feature);
 void CalFeatureMinErrorRate();
 Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
-void DrawRectangle(Feature& feature,Sample&image)
+void InitialSomeVariable();
+void DrawRectangle(Feature& feature, Sample& image);
 

@@ -11,6 +11,7 @@ int featureNum=0;//全部特征数
 ER_Number* ERtable;
 double curTP=(double)__TP / SAMPLE_NUM;
 double curTN=(double)__TN / SAMPLE_NUM;
+string classifierPathName = "classifiers.txt";
 #ifdef Version_100
 string posPathName = "Code/pos_100/pos.txt";
 string negPathName = "Code/neg_100/neg.txt";
