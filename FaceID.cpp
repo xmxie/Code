@@ -129,69 +129,69 @@ Key_Value* CalFeatureValue(Sample* samples, Feature& feature) {
 	switch (feature.model)
 	{
 	case 0: {
-		uchar X_Y, X_YF, X_YFF, XF_Y;
+		int  X_Y, X_YF, X_YFF, XF_Y;
 		for (int i = 0; i < SAMPLE_NUM; i++) {
-			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y) : 0;
-			X_YF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + feature.factor) : 0;
-			X_YFF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + 2 * feature.factor) : 0;
-			XF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y) : 0;
-			keyValues[i].value = X_Y + 2 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + feature.factor) + X_YFF - XF_Y
-				- 2 * X_YF - samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + 2 * feature.factor);
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			X_YFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			keyValues[i].value = X_Y + 2 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1) + X_YFF - XF_Y
+				- 2 * X_YF - samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 2 * feature.factor-1);
 			keyValues[i].key = samples[i].result;
 			keyValues[i].weight = samples[i].weight;
 		}
 	}break;
 	case 1: {
-		uchar X_Y, X_YF, XF_Y, XFF_Y;
+		int  X_Y, X_YF, XF_Y, XFF_Y;
 		for (int i = 0; i < SAMPLE_NUM; i++) {
-			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y) : 0;
-			X_YF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + feature.factor) : 0;
-			XF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y) : 0;
-			XFF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y) : 0;
-			keyValues[i].value = X_YF + 2 * XF_Y + samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y + feature.factor)
-				- X_Y - 2 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + feature.factor) - XFF_Y;
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			XFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y) : 0;
+			keyValues[i].value = X_YF + 2 * XF_Y + samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + feature.factor-1)
+				- X_Y - 2 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1) - XFF_Y;
 			keyValues[i].key = samples[i].result;
 			keyValues[i].weight = samples[i].weight;
 		}
 	}break;
 	case 2: {
-		uchar X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
+		int  X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
 		for (int i = 0; i < SAMPLE_NUM; i++) {
-			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y) : 0;
-			X_YF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + feature.factor) : 0;
-			XF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y) : 0;
-			X_YFF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + 2 * feature.factor) : 0;
-			X_YFFF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + 3 * feature.factor) : 0;
-			keyValues[i].value = 3 * X_YF + XF_Y + X_YFFF + 3 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + 2 * feature.factor)
-				- X_Y - 3 * X_YFF - samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + 3 * feature.factor) - 3 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + feature.factor);
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			X_YFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor-1) : 0;
+			X_YFFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 3 * feature.factor-1) : 0;
+			keyValues[i].value = 3 * X_YF + XF_Y + X_YFFF + 3 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 2 * feature.factor-1)
+				- X_Y - 3 * X_YFF - samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 3 * feature.factor-1) - 3 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1);
 			keyValues[i].key = samples[i].result;
 			keyValues[i].weight = samples[i].weight;
 		}
 	}break;
 	case 3: {
-		uchar X_Y, X_YF, XF_Y, XFF_Y, XFFF_Y;
+		int  X_Y, X_YF, XF_Y, XFF_Y, XFFF_Y;
 		for (int i = 0; i < SAMPLE_NUM; i++) {
-			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y) : 0;
-			X_YF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + feature.factor) : 0;
-			XF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y) : 0;
-			XFF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y) : 0;
-			XFFF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + 3 * feature.factor, feature.Y) : 0;
-			keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y + feature.factor)
-				- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<uchar>(feature.X + 3 * feature.factor, feature.Y + feature.factor) - 3 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + feature.factor);
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			XFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y) : 0;
+			XFFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 3 * feature.factor-1, feature.Y) : 0;
+			keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + feature.factor-1)
+				- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<int >(feature.X + 3 * feature.factor-1, feature.Y + feature.factor-1) - 3 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1);
 			keyValues[i].key = samples[i].result;
 			keyValues[i].weight = samples[i].weight;
 		}
 	}break;
 	case 4: {
-		uchar X_Y, X_YF, XF_Y, XFF_Y, X_YFF;
+		int  X_Y, X_YF, XF_Y, XFF_Y, X_YFF;
 		for (int i = 0; i < SAMPLE_NUM; i++) {
-			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y) : 0;
-			X_YF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + feature.factor) : 0;
-			XF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y) : 0;
-			XFF_Y = feature.Y ? samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y) : 0;
-			X_YFF = feature.X ? samples[i].integralDiagram.at<uchar>(feature.X, feature.Y + 2 * feature.factor) : 0;
-			keyValues[i].value = 2 * XF_Y + 2 * X_YF + 2 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + 2 * feature.factor) + 2 * samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y + feature.factor)
-				- X_Y - X_YFF - XFF_Y - 4 * samples[i].integralDiagram.at<uchar>(feature.X + feature.factor, feature.Y + feature.factor) - samples[i].integralDiagram.at<uchar>(feature.X + 2 * feature.factor, feature.Y + 2 * feature.factor);
+			X_Y = feature.X + feature.Y ? samples[i].integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + feature.factor-1) : 0;
+			XF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y) : 0;
+			XFF_Y = feature.Y ? samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y) : 0;
+			X_YFF = feature.X ? samples[i].integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor-1) : 0;
+			keyValues[i].value = 2 * XF_Y + 2 * X_YF + 2 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + 2 * feature.factor-1) + 2 * samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + feature.factor-1)
+				- X_Y - X_YFF - XFF_Y - 4 * samples[i].integralDiagram.at<int >(feature.X + feature.factor-1, feature.Y + feature.factor-1) - samples[i].integralDiagram.at<int >(feature.X + 2 * feature.factor-1, feature.Y + 2 * feature.factor-1);
 			keyValues[i].key = samples[i].result;
 			keyValues[i].weight = samples[i].weight;
 		}
