@@ -5,11 +5,11 @@ void CalIntegralDiagrams(){
 		//samples[num].integralDiagram = samples[num].img.clone();
 		samples[num].img.convertTo(samples[num].integralDiagram, CV_32SC1);
 		samples[num].integralDiagram.at<int>(0, 0) = samples[num].img.at<uchar>(0, 0);
-		for (int j = 1; j < MAP_ROWS; j++)//Çó³öµÚÒ»ÁĞµÄÖµ
+		for (int j = 1; j < MAP_ROWS; j++)//æ±‚å‡ºç¬¬ä¸€åˆ—çš„å€¼
 			samples[num].integralDiagram.at<int>(j, 0) =
 			samples[num].integralDiagram.at<int>(j-1, 0)
 			+ samples[num].img.at<uchar>(j, 0);
-		for (int i = 1; i < MAP_ROWS; i++)//Çó³öµÚÒ»ĞĞµÄÖµ
+		for (int i = 1; i < MAP_ROWS; i++)//æ±‚å‡ºç¬¬ä¸€è¡Œçš„å€¼
 			samples[num].integralDiagram.at<int>(0, i) =
 			samples[num].integralDiagram.at<int>(0, i-1)
 			+ samples[num].img.at<uchar>(0, i);
@@ -27,19 +27,16 @@ void CalIntegralDiagrams(){
 void GenerateFeatures() {
 	int xSize, ySize, Square;
 	for (int model = 0; model < MODEL_NUM; model++) {
-		printf("¿ªÊ¼´¦ÀíÄ£ĞÍ%d\n", model);
 		for (int factor = 1;; factor++) {
-			//ÅĞ¶ÏÌø³öÌõ¼ş Ğ¡ÓÚ×îĞ¡Ãæ»ı»òÕß³¬¹ıÍ¼Æ¬Ãæ»ı
-			xSize = factor * s[model];//¼ÆËã´°¿Ú³¤
-			ySize = factor * t[model];//¼ÆËã´°¿Ú¸ß
-			Square = xSize * ySize;//¼ÆËã´°¿ÚÃæ»ı
-			if (xSize > MAP_COLS || ySize > MAP_ROWS) {//Ãæ»ı¹ıĞ¡ »òÕß³¤¸ß³¬ÏŞ¾ÍÌø³öÑ­»·
-				printf("ÖØÖÃ·Å´óÒò×Ó\n");
+			//åˆ¤æ–­è·³å‡ºæ¡ä»¶ å°äºæœ€å°é¢ç§¯æˆ–è€…è¶…è¿‡å›¾ç‰‡é¢ç§¯
+			xSize = factor * s[model];//è®¡ç®—çª—å£é•¿
+			ySize = factor * t[model];//è®¡ç®—çª—å£é«˜
+			Square = xSize * ySize;//è®¡ç®—çª—å£é¢ç§¯
+			if (xSize > MAP_COLS || ySize > MAP_ROWS) {//é¢ç§¯è¿‡å° æˆ–è€…é•¿é«˜è¶…é™å°±è·³å‡ºå¾ªç¯
 				break;
 			}
 			else if (Square < minSquare[model])
 				continue;
-			printf("·Å´óÒò×ÓÎª%d\n", factor);
 			for (int Y = 0; Y <= MAP_ROWS - ySize; Y++)
 				for (int X = 0; X <= MAP_COLS - xSize; X++) {
 					Features[featureNum].factor = factor;
@@ -59,6 +56,7 @@ void CalFeatureMinErrorRate(){
 	Key_Value* keyValues;
 	double minWrong;
 	double __SP,__SN,wrong10, wrong01;
+	int test = 0;
 	for (int fIndex = 0; fIndex < featureNum; fIndex++) {
 		keyValues = CalFeatureValue(Features[fIndex]);
 		sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value > kv2.value; });
@@ -96,23 +94,23 @@ void Train() {
 	Factor = new Feature*[HARD_CLASSIFIER_STAGES];
 	for (int i = 0; i < HARD_CLASSIFIER_STAGES; i++)
 		Factor[i] = new Feature[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
-	ofstream Fout("classifiers.txt");
+	ofstream fout("classifiers.txt");
 
 	GenerateFeatures();
 	for (int stage = 0; stage < HARD_CLASSIFIER_STAGES; stage++) {
 		for (int curWeakClassifierNum = 0; curWeakClassifierNum < weakClassifierNum[stage]; curWeakClassifierNum++) {
 			CalFeatureMinErrorRate();
 			sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.errorRate < ern2.errorRate; });
-			Feature& CurBestFeature = StoreClassifier(curWeakClassifierNum, stage);
+			Feature& CurBestFeature = StoreClassifier(fout,curWeakClassifierNum, stage);
 			UpdateSampleWeight(CurBestFeature);	
 		}
 	}
 
 	cin.get();
 }
-Sample* GetSamples() {
+void GetSamples() {
 	ifstream fin; 
-	Sample* imageSet = new Sample[__TP+__TN];
+	samples= new Sample[__TP+__TN];
 	string imagePath;
 	fin.open(posPathName);
 	if (!fin.is_open())
@@ -122,9 +120,9 @@ Sample* GetSamples() {
 	}
 	for (int i = 0; i < __TP ; i++)
 	{
-		fin >> imagePath >> imageSet[i].result;
-		imageSet[i].img = imread(imagePath, 0);
-		imageSet[i].weight = 1.0 / SAMPLE_NUM;
+		fin >> imagePath >> samples[i].result;
+		samples[i].img = imread(imagePath, 0);
+		samples[i].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
 	fin.open(negPathName);
@@ -135,12 +133,11 @@ Sample* GetSamples() {
 	}
 	for (int j = __TP ; j < __TP + __TN; j++)
 	{
-		fin >> imagePath >> imageSet[j].result;
-		imageSet[j].img = imread(imagePath,0);
-		imageSet[j].weight = 1.0 / SAMPLE_NUM;
+		fin >> imagePath >> samples[j].result;
+		samples[j].img = imread(imagePath,0);
+		samples[j].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
-	return imageSet;
 }
 Key_Value* CalFeatureValue(Feature& feature) {
 	Key_Value* keyValues = new Key_Value[SAMPLE_NUM];
@@ -220,19 +217,29 @@ Key_Value* CalFeatureValue(Feature& feature) {
 	return keyValues;
 }
 ostream& operator<<(ostream& os, Feature& feature) {
-	os << "Ä£ĞÍ: " << feature.model<<endl
-		<<"·Å´ó±¶Êı: "<<feature.factor<<endl
-		<<"×óÉÏ½ÇÎ»ÖÃ: "<<"("<<feature.X<<","<<feature.Y<<")"<<endl
-		<<"´íÎóÂÊ: "<<feature.eRate<<endl
-		<<"ãĞÖµ£º"<<feature.threshold<<endl
-		<<"·ûºÅ£º"<<feature.p<<endl;
+	os << "æ¨¡å‹: " << feature.model << endl
+		<< "æ”¾å¤§å€æ•°: " << feature.factor << endl
+		<< "å·¦ä¸Šè§’ä½ç½®: " << "(" << feature.X << "," << feature.Y << ")" << endl
+		<< "é”™è¯¯ç‡: " << feature.eRate << endl
+		<<"æƒé‡ç³»æ•°: "<< log((1 - feature.eRate) / feature.eRate) / 2
+		<< "é˜ˆå€¼ï¼š" << feature.threshold << endl
+		<< "ç¬¦å·ï¼š" << feature.p << endl
+		<< "ç¼–å·ï¼š" << feature.Number << endl;
 	return os;
 }
 ofstream& operator<<(ofstream& fout, Feature& feature) {
+	fout << left << setw(3) << feature.model
+		<< setw(3) << feature.factor
+		<< setw(5) << feature.X
+		<< setw(5) << feature.Y
+		<< setw(12) << feature.eRate
+		<< setw(12) << log((1 - feature.eRate) / feature.eRate) / 2
+		<< setw(5) << feature.threshold
+		<< setw(3) << feature.p
+		<< endl;
 	return fout;
 }
-Feature& StoreClassifier(int& curWeakClassifierNum,int stage) {
-	ofstream fout;
+Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage) {
 	int index;
 	for (int i = 0; i < featureNum; i++) {
 		bool ok = true;
@@ -243,12 +250,12 @@ Feature& StoreClassifier(int& curWeakClassifierNum,int stage) {
 			}
 		if (ok) {
 			index = ERtable[i].Number;
-			Factor[stage][curWeakClassifierNum++] = Features[index];
+			Factor[stage][curWeakClassifierNum] = Features[index];
 			break;
 		}
 	}
-	cout << Features[index]<<endl;
-	//fout << Features[index];
+	cout << "ç¬¬"<< curWeakClassifierNum +1<<"ä¸ª"<<endl<<Features[index]<<endl;
+	fout << Features[index];
 	return Features[index];
 }
 void UpdateSampleWeight(Feature& bestFeature) {
@@ -271,11 +278,9 @@ void UpdateSampleWeight(Feature& bestFeature) {
 			curTP += samples[i].weight;
 		else
 			curTN += samples[i].weight;
-		cout << samples[i].weight << endl;
 	}
 	delete[] keyValues;
 }
-
 
 void DrawRectangle(Feature &feature, Sample &image) {
 	switch (feature.model) {
