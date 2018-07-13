@@ -100,5 +100,5 @@ ofstream& operator<<(ofstream& fout, Feature& feature);
 void CalFeatureMinErrorRate();
 Feature& StoreClassifier(int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
-
+void DrawRectangle(Feature& feature,Sample image)
 
