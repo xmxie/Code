@@ -16,6 +16,7 @@ using namespace cv;
 #define MAP_COLS 20
 #define SAMPLE_NUM 200
 #define HARD_CLASSIFIER_STAGES 1
+#define MAX_WEAK_CLASSIFIER_NUM_PER_HARD 20
 #define MODEL_NUM 5
 #define FEATURE_NUM 200000
 #define __TP 100
@@ -30,6 +31,7 @@ typedef struct {
 	double eRate;
 	int threshold;
 	int p;
+	int Number;
 } Feature;
 
 typedef struct {
@@ -49,7 +51,6 @@ typedef struct {
 	double errorRate;
 	int Number;
 } ER_Number;
-
 
 /* 
 	------------特征模板标记及其外貌-------------
@@ -89,11 +90,14 @@ typedef struct {
 		---------
 */
 
-Sample* GetSamples(string& posPathName,string& negPathName);//读入样本图
-void Train(Sample* samples);//训练
-Key_Value* CalFeatureValue(Sample* samples, Feature& feature);
-void CalIntegralDiagrams(Sample* samples);//计算样本的积分图 并返回一个矩阵
+Sample* GetSamples();//读入样本图
+void Train();//训练
+Key_Value* CalFeatureValue(Feature& feature);
+void CalIntegralDiagrams();//计算样本的积分图 并返回一个矩阵
+void GenerateFeatures();
 ostream& operator<<(ostream& os, Feature& feature);
-void StoreClassifier(ofstream& fout, Feature* allFeatures, ER_Number* ERtable);
-void UpdateSampleWeight(Sample* samples,Feature& bestFeature);
+ofstream& operator<<(ofstream& fout, Feature& feature);
+void CalFeatureMinErrorRate();
+Feature& StoreClassifier(int& curWeakClassifierNum,int stage);
+void UpdateSampleWeight(Feature& bestFeature);
 
