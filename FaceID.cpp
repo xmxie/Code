@@ -56,6 +56,7 @@ void CalFeatureMinErrorRate(){
 	Key_Value* keyValues;
 	double minWrong;
 	double __SP,__SN,wrong10, wrong01;
+	int test = 0;
 	for (int fIndex = 0; fIndex < featureNum; fIndex++) {
 		keyValues = CalFeatureValue(Features[fIndex]);
 		sort(keyValues, keyValues + SAMPLE_NUM, [](Key_Value kv1, Key_Value kv2) {return kv1.value > kv2.value; });
@@ -85,6 +86,11 @@ void CalFeatureMinErrorRate(){
 		ERtable[fIndex].errorRate = Features[fIndex].eRate = minWrong;
 		ERtable[fIndex].Number = fIndex;
 		delete[] keyValues;
+		if (fIndex > test + featureNum / 4) {
+			test += featureNum / 4;
+			cout << "Finish 1/4" << endl;
+		}
+
 	}
 }
 void Train() {
@@ -100,8 +106,6 @@ void Train() {
 		for (int curWeakClassifierNum = 0; curWeakClassifierNum < weakClassifierNum[stage]; curWeakClassifierNum++) {
 			CalFeatureMinErrorRate();
 			sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.errorRate < ern2.errorRate; });
-			for (int i = 0; i < featureNum; i++)
-				cout << ERtable[i].errorRate << endl;
 			Feature& CurBestFeature = StoreClassifier(curWeakClassifierNum, stage);
 			UpdateSampleWeight(CurBestFeature);	
 		}

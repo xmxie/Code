@@ -12,13 +12,13 @@
 #include<ctime>
 using namespace std;
 using namespace cv;
-#define MAP_ROWS 20
-#define MAP_COLS 20
+#define MAP_ROWS 100
+#define MAP_COLS 100
 #define SAMPLE_NUM 2000
 #define HARD_CLASSIFIER_STAGES 1
 #define MAX_WEAK_CLASSIFIER_NUM_PER_HARD 20
 #define MODEL_NUM 5
-#define FEATURE_NUM 200000
+#define FEATURE_NUM 1000000
 #define __TP 1000
 #define __TN 1000
 typedef struct {
