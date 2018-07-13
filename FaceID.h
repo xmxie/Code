@@ -8,24 +8,28 @@
 #include<vector>
 #include <amp.h>
 #include<amp_math.h>
+#include <algorithm>
 #include<ctime>
 using namespace std;
 using namespace cv;
-#define MAP_ROWS 100
-#define MAP_COLS 100
-#define SAMPLE_NUM 0
+#define MAP_ROWS 20
+#define MAP_COLS 20
+#define SAMPLE_NUM 200
 #define HARD_CLASSIFIER_STAGES 1
 #define MODEL_NUM 5
 #define FEATURE_NUM 200000
-#define __TP 1000
-#define __TN 1000
+#define __TP 100
+#define __TN 100
 typedef struct {
-	int model;//ÄÄ¸ö´óÀà
-	int factor;//Ëõ·ÅÒò×Ó
+	int model;//å“ªä¸ªå¤§ç±»
+	int factor;//ç¼©æ”¾å› å­
 	int xSize;
 	int ySize;
 	int X;
 	int Y;
+	double eRate;
+	int threshold;
+	int p;
 } Feature;
 
 typedef struct {
@@ -35,9 +39,20 @@ typedef struct {
 	double weight;
 } Sample;
 
+typedef struct {
+	bool key;
+	int value;
+	double weight;
+}Key_Value;
 
-/*
-	------------ÌØÕ÷Ä£°å±ê¼Ç¼°ÆäÍâÃ²-------------
+typedef struct {
+	double errorRate;
+	int Number;
+} ER_Number;
+
+
+/* 
+	------------ç‰¹å¾æ¨¡æ¿æ ‡è®°åŠå…¶å¤–è²Œ-------------
 	0:	(s,t)=(1,2)
 		---------
 		|*******|	
@@ -73,8 +88,12 @@ typedef struct {
 		|***|	|
 		---------
 */
-Mat* GetSamples(string& pathName,bool*& results);//¶ÁÈëÑù±¾Í¼
-void Train(Mat* samples,Mat* integralDiagrams);//ÑµÁ·
-Mat* CalIntegralDiagrams(Mat* samples);//¼ÆËãÑù±¾µÄ»ı·ÖÍ¼ ²¢·µ»ØÒ»¸ö¾ØÕó
-//Mat LoadSampleWeights(string& sampleWeightPathName);
+Sample* GetSamples(string& posPathName,string& negPathName);//è¯»å…¥æ ·æœ¬å›¾
+void Train(Sample* samples);//è®­ç»ƒ
+Key_Value* CalFeatureValue(Sample* samples, Feature& feature);
+void CalIntegralDiagrams(Sample* samples);//è®¡ç®—æ ·æœ¬çš„ç§¯åˆ†å›¾ å¹¶è¿”å›ä¸€ä¸ªçŸ©é˜µ
+ostream& operator<<(ostream& os, Feature& feature);
+void StoreClassifier(ofstream& fout, Feature* allFeatures, ER_Number* ERtable);
+void UpdateSampleWeight(Sample* samples,Feature& bestFeature);
+
 
