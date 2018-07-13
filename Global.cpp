@@ -11,8 +11,8 @@ int featureNum=0;//全部特征数
 ER_Number* ERtable;
 double curTP=(double)__TP / SAMPLE_NUM;
 double curTN=(double)__TN / SAMPLE_NUM;
-string posPathName= "Code/pos/pos.txt";
-string negPathName= "Code/neg/neg.txt";
+string posPathName= "Code/pos_100/pos.txt";
+string negPathName= "Code/neg_100/neg.txt";
 
 
 
