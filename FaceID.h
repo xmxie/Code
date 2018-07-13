@@ -10,10 +10,20 @@
 #include<amp_math.h>
 #include <algorithm>
 #include<ctime>
+#include<iomanip>
 using namespace std;
 using namespace cv;
+#define Version_20
+
+
+#ifdef Version_20
+#define MAP_ROWS 20
+#define MAP_COLS 20
+#endif // Version_20
+#ifdef Version_100
 #define MAP_ROWS 100
 #define MAP_COLS 100
+#endif // Version_100
 #define SAMPLE_NUM 2000
 #define HARD_CLASSIFIER_STAGES 1
 #define MAX_WEAK_CLASSIFIER_NUM_PER_HARD 20
@@ -21,6 +31,7 @@ using namespace cv;
 #define FEATURE_NUM 1000000
 #define __TP 1000
 #define __TN 1000
+
 typedef struct {
 	//以下是不随迭代变化的量
 	int model;//哪个大类
@@ -98,7 +109,7 @@ void GenerateFeatures();
 ostream& operator<<(ostream& os, Feature& feature);
 ofstream& operator<<(ofstream& fout, Feature& feature);
 void CalFeatureMinErrorRate();
-Feature& StoreClassifier(int& curWeakClassifierNum,int stage);
+Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
 
 

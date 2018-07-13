@@ -86,11 +86,6 @@ void CalFeatureMinErrorRate(){
 		ERtable[fIndex].errorRate = Features[fIndex].eRate = minWrong;
 		ERtable[fIndex].Number = fIndex;
 		delete[] keyValues;
-		if (fIndex > test + featureNum / 4) {
-			test += featureNum / 4;
-			cout << "Finish 1/4" << endl;
-		}
-
 	}
 }
 void Train() {
@@ -99,14 +94,14 @@ void Train() {
 	Factor = new Feature*[HARD_CLASSIFIER_STAGES];
 	for (int i = 0; i < HARD_CLASSIFIER_STAGES; i++)
 		Factor[i] = new Feature[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
-	ofstream Fout("classifiers.txt");
+	ofstream fout("classifiers.txt");
 
 	GenerateFeatures();
 	for (int stage = 0; stage < HARD_CLASSIFIER_STAGES; stage++) {
 		for (int curWeakClassifierNum = 0; curWeakClassifierNum < weakClassifierNum[stage]; curWeakClassifierNum++) {
 			CalFeatureMinErrorRate();
 			sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.errorRate < ern2.errorRate; });
-			Feature& CurBestFeature = StoreClassifier(curWeakClassifierNum, stage);
+			Feature& CurBestFeature = StoreClassifier(fout,curWeakClassifierNum, stage);
 			UpdateSampleWeight(CurBestFeature);	
 		}
 	}
@@ -233,10 +228,18 @@ ostream& operator<<(ostream& os, Feature& feature) {
 	return os;
 }
 ofstream& operator<<(ofstream& fout, Feature& feature) {
+	fout << left << setw(3) << feature.model
+		<< setw(3) << feature.factor
+		<< setw(5) << feature.X
+		<< setw(5) << feature.Y
+		<< setw(12) << feature.eRate
+		<< setw(12) << log((1 - feature.eRate) / feature.eRate) / 2
+		<< setw(5) << feature.threshold
+		<< setw(3) << feature.p
+		<< endl;
 	return fout;
 }
-Feature& StoreClassifier(int& curWeakClassifierNum,int stage) {
-	ofstream fout;
+Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage) {
 	int index;
 	for (int i = 0; i < featureNum; i++) {
 		bool ok = true;
@@ -251,8 +254,8 @@ Feature& StoreClassifier(int& curWeakClassifierNum,int stage) {
 			break;
 		}
 	}
-	cout << "第"<< curWeakClassifierNum +1<<"个"<<Features[index]<<endl;
-	//fout << Features[index];
+	cout << "第"<< curWeakClassifierNum +1<<"个"<<endl<<Features[index]<<endl;
+	fout << Features[index];
 	return Features[index];
 }
 void UpdateSampleWeight(Feature& bestFeature) {
