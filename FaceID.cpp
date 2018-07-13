@@ -1,9 +1,9 @@
 #include"FaceID.h"
 
-int weakClassifierNum[HARD_CLASSIFIER_STAGES] = {};
-int minSquare[MODEL_NUM] = {};
-int s[MODEL_NUM];
-int t[MODEL_NUM];
+int weakClassifierNum[HARD_CLASSIFIER_STAGES] = {20};
+int minSquare[MODEL_NUM] = {16,16,24,24,32};
+int s[MODEL_NUM] = {1,2,1,3,2};
+int t[MODEL_NUM] = {2,1,3,1,2};
 void CalIntegralDiagrams(Sample* samples){
 	for (int num = 0; num < SAMPLE_NUM; num++){
 		//samples[num].integralDiagram = samples[num].img.clone();
@@ -40,10 +40,12 @@ void Train(Sample* samples) {
 			int xSize = factor * s[model];//计算窗口长
 			int ySize = factor * t[model];//计算窗口高
 			int Square = xSize * ySize;//计算窗口面积
-			if (Square<minSquare[model] || xSize>MAP_COLS || ySize > MAP_ROWS) {//面积过小 或者长高超限就跳出循环
+			if (xSize > MAP_COLS || ySize > MAP_ROWS) {//面积过小 或者长高超限就跳出循环
 				printf("重置放大因子\n");
 				break;
 			}
+			else if (Square < minSquare[model])
+				continue;
 			printf("放大因子为%d\n", factor);
 			for (int Y = 0; Y <= MAP_ROWS - ySize; Y++)
 				for (int X = 0; X <= MAP_COLS - xSize; X++) {
@@ -58,65 +60,65 @@ void Train(Sample* samples) {
 					switch (model)
 					{
 					case 0: {
-						uchar X_Y, X_YF, X_YFF, XF_Y;
+						int X_Y, X_YF, X_YFF, XF_Y;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
-							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
-							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor) : 0;
-							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							keyValues[i].value = X_Y + 2 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) + X_YFF - XF_Y
-								- 2 * X_YF - samples[i].integralDiagram.at<uchar>(X + factor, Y + 2 * factor);
+							X_Y = X + Y ? samples[i].integralDiagram.at<int>(X, Y) : 0;
+							X_YF = X ? samples[i].integralDiagram.at<int>(X, Y + factor-1) : 0;
+							X_YFF = X ? samples[i].integralDiagram.at<int>(X, Y + 2 * factor-1) : 0;
+							XF_Y = Y ? samples[i].integralDiagram.at<int>(X + factor-1, Y) : 0;
+							keyValues[i].value = X_Y + 2 * samples[i].integralDiagram.at<int>(X + factor-1, Y + factor-1) + X_YFF - XF_Y
+								- 2 * X_YF - samples[i].integralDiagram.at<int>(X + factor-1, Y + 2 * factor-1);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					case 1: {
-						uchar X_Y, X_YF, XF_Y, XFF_Y;
+						int X_Y, X_YF, XF_Y, XFF_Y;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
-							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
-							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y) : 0;
-							keyValues[i].value = X_YF + 2 * XF_Y + samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
-								- X_Y - 2 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) - XFF_Y;
+							X_Y = X + Y ? samples[i].integralDiagram.at<int>(X, Y) : 0;
+							X_YF = X ? samples[i].integralDiagram.at<int>(X, Y + factor-1) : 0;
+							XF_Y = Y ? samples[i].integralDiagram.at<int>(X + factor-1, Y) : 0;
+							XFF_Y = Y ? samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y) : 0;
+							keyValues[i].value = X_YF + 2 * XF_Y + samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y + factor-1)
+								- X_Y - 2 * samples[i].integralDiagram.at<int>(X + factor-1, Y + factor-1) - XFF_Y;
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					case 2: {
-						uchar X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
+						int X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
-							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
-							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor) : 0;
-							X_YFFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 3 * factor) : 0;
-							keyValues[i].value = 3 * X_YF + XF_Y + X_YFFF + 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + 2 * factor)
-								- X_Y - 3 * X_YFF - samples[i].integralDiagram.at<uchar>(X + factor, Y + 3 * factor) - 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor);
+							X_Y = X + Y ? samples[i].integralDiagram.at<int>(X, Y) : 0;
+							X_YF = X ? samples[i].integralDiagram.at<int>(X, Y + factor-1) : 0;
+							XF_Y = Y ? samples[i].integralDiagram.at<int>(X + factor-1, Y) : 0;
+							X_YFF = X ? samples[i].integralDiagram.at<int>(X, Y + 2 * factor-1) : 0;
+							X_YFFF = X ? samples[i].integralDiagram.at<int>(X, Y + 3 * factor-1) : 0;
+							keyValues[i].value = 3 * X_YF + XF_Y + X_YFFF + 3 * samples[i].integralDiagram.at<int>(X + factor-1, Y + 2 * factor-1)
+								- X_Y - 3 * X_YFF - samples[i].integralDiagram.at<int>(X + factor-1, Y + 3 * factor-1) - 3 * samples[i].integralDiagram.at<int>(X + factor-1, Y + factor-1);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					case 3: {
-						uchar X_Y, X_YF, XF_Y, XFF_Y, XFFF_Y;
+						int X_Y, X_YF, XF_Y, XFF_Y, XFFF_Y;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
-							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
-							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y) : 0;
-							XFFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 3 * factor, Y) : 0;
-							keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
-								- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<uchar>(X + 3 * factor, Y + factor) - 3 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor);
+							X_Y = X + Y ? samples[i].integralDiagram.at<int>(X, Y) : 0;
+							X_YF = X ? samples[i].integralDiagram.at<int>(X, Y + factor-1) : 0;
+							XF_Y = Y ? samples[i].integralDiagram.at<int>(X + factor-1, Y) : 0;
+							XFF_Y = Y ? samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y) : 0;
+							XFFF_Y = Y ? samples[i].integralDiagram.at<int>(X + 3 * factor-1, Y) : 0;
+							keyValues[i].value = 3 * XF_Y + X_YF + XFFF_Y + 3 * samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y + factor-1)
+								- X_Y - 3 * XFF_Y - samples[i].integralDiagram.at<int>(X + 3 * factor-1, Y + factor-1) - 3 * samples[i].integralDiagram.at<int>(X + factor-1, Y + factor-1);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
 					case 4: {
-						uchar X_Y, X_YF, XF_Y, XFF_Y, X_YFF;
+						int X_Y, X_YF, XF_Y, XFF_Y, X_YFF;
 						for (int i = 0; i < SAMPLE_NUM; i++) {
-							X_Y = X + Y ? samples[i].integralDiagram.at<uchar>(X, Y) : 0;
-							X_YF = X ? samples[i].integralDiagram.at<uchar>(X, Y + factor) : 0;
-							XF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + factor, Y) : 0;
-							XFF_Y = Y ? samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y) : 0;
-							X_YFF = X ? samples[i].integralDiagram.at<uchar>(X, Y + 2 * factor) : 0;
-							keyValues[i].value = 2 * XF_Y + 2 * X_YF + 2 * samples[i].integralDiagram.at<uchar>(X + factor, Y + 2 * factor) + 2 * samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + factor)
-								- X_Y - X_YFF - XFF_Y - 4 * samples[i].integralDiagram.at<uchar>(X + factor, Y + factor) - samples[i].integralDiagram.at<uchar>(X + 2 * factor, Y + 2 * factor);
+							X_Y = X + Y ? samples[i].integralDiagram.at<int>(X, Y) : 0;
+							X_YF = X ? samples[i].integralDiagram.at<int>(X, Y + factor-1) : 0;
+							XF_Y = Y ? samples[i].integralDiagram.at<int>(X + factor-1, Y) : 0;
+							XFF_Y = Y ? samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y) : 0;
+							X_YFF = X ? samples[i].integralDiagram.at<int>(X, Y + 2 * factor-1) : 0;
+							keyValues[i].value = 2 * XF_Y + 2 * X_YF + 2 * samples[i].integralDiagram.at<int>(X + factor-1, Y + 2 * factor-1) + 2 * samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y + factor-1)
+								- X_Y - X_YFF - XFF_Y - 4 * samples[i].integralDiagram.at<int>(X + factor-1, Y + factor-1) - samples[i].integralDiagram.at<int>(X + 2 * factor-1, Y + 2 * factor-1);
 							keyValues[i].key = samples[i].result;
 						}
 					}break;
@@ -147,13 +149,15 @@ void Train(Sample* samples) {
 					}
 					ERtable[featureNum].errorRate = Features[featureNum].eRate = (double)minWrong / SAMPLE_NUM;
 					ERtable[featureNum].Number = featureNum;
+					//cout << Features[featureNum]<<endl;
 					featureNum++;
 					delete[] keyValues;
 				}
 		}
 	}
-	sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.Number < ern2.Number; });
+	sort(ERtable, ERtable + featureNum, [](ER_Number& ern1, ER_Number& ern2) {return ern1.errorRate < ern2.errorRate; });
 	cout << Features[ERtable[0].Number];
+	cin.get();
 }
 Sample* GetSamples(string& posPathName, string& negPathName) {
 	ifstream fin; 

@@ -12,8 +12,8 @@
 #include<ctime>
 using namespace std;
 using namespace cv;
-#define MAP_ROWS 100
-#define MAP_COLS 100
+#define MAP_ROWS 20
+#define MAP_COLS 20
 #define SAMPLE_NUM 200
 #define HARD_CLASSIFIER_STAGES 1
 #define MODEL_NUM 5
