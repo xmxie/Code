@@ -109,9 +109,9 @@ void Train() {
 
 	cin.get();
 }
-Sample* GetSamples() {
+void GetSamples() {
 	ifstream fin; 
-	Sample* imageSet = new Sample[__TP+__TN];
+	samples= new Sample[__TP+__TN];
 	string imagePath;
 	fin.open(posPathName);
 	if (!fin.is_open())
@@ -121,9 +121,9 @@ Sample* GetSamples() {
 	}
 	for (int i = 0; i < __TP ; i++)
 	{
-		fin >> imagePath >> imageSet[i].result;
-		imageSet[i].img = imread(imagePath, 0);
-		imageSet[i].weight = 1.0 / SAMPLE_NUM;
+		fin >> imagePath >> samples[i].result;
+		samples[i].img = imread(imagePath, 0);
+		samples[i].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
 	fin.open(negPathName);
@@ -134,12 +134,11 @@ Sample* GetSamples() {
 	}
 	for (int j = __TP ; j < __TP + __TN; j++)
 	{
-		fin >> imagePath >> imageSet[j].result;
-		imageSet[j].img = imread(imagePath,0);
-		imageSet[j].weight = 1.0 / SAMPLE_NUM;
+		fin >> imagePath >> samples[j].result;
+		samples[j].img = imread(imagePath,0);
+		samples[j].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
-	return imageSet;
 }
 Key_Value* CalFeatureValue(Feature& feature) {
 	Key_Value* keyValues = new Key_Value[SAMPLE_NUM];
@@ -276,4 +275,27 @@ void UpdateSampleWeight(Feature& bestFeature) {
 	delete[] keyValues;
 }
 
+void DrawRectangle(Feature feature, Sample image){
+	switch (feature.model) {
+	case(0): {
+		for (int count = 1; count <= feature.factor; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, count,count), 1, 0, 1, 0);
+		break; }
+	case(1):{
+		for (int count = 1; count <= feature.factor; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, 2*count,count), 1, 0, 1, 0);
+		break; }
+	case(2):{
+		for (int count = 1; count <= feature.factor; count++)
+		rectangle(image.img, Rect(feature.X, feature.Y, count, 3 * count), 1, 0, 1, 0);
+		break; }
+	case(3):{
+		for (int count = 1; count <= feature.factor; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, 3*count, count), 1, 0, 1, 0);
+		break; }
+	case(4):{
+		for (int count = 1; count <= feature.factor; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, 2*count, 2 * count), 1, 0, 1, 0);
+		break; }
+}
 
