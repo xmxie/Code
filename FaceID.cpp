@@ -5,11 +5,11 @@ void CalIntegralDiagrams(){
 		//samples[num].integralDiagram = samples[num].img.clone();
 		samples[num].img.convertTo(samples[num].integralDiagram, CV_32SC1);
 		samples[num].integralDiagram.at<int>(0, 0) = samples[num].img.at<uchar>(0, 0);
-		for (int j = 1; j < MAP_ROWS; j++)//Çó³öµÚÒ»ÁĞµÄÖµ
+		for (int j = 1; j < MAP_ROWS; j++)//æ±‚å‡ºç¬¬ä¸€åˆ—çš„å€¼
 			samples[num].integralDiagram.at<int>(j, 0) =
 			samples[num].integralDiagram.at<int>(j-1, 0)
 			+ samples[num].img.at<uchar>(j, 0);
-		for (int i = 1; i < MAP_ROWS; i++)//Çó³öµÚÒ»ĞĞµÄÖµ
+		for (int i = 1; i < MAP_ROWS; i++)//æ±‚å‡ºç¬¬ä¸€è¡Œçš„å€¼
 			samples[num].integralDiagram.at<int>(0, i) =
 			samples[num].integralDiagram.at<int>(0, i-1)
 			+ samples[num].img.at<uchar>(0, i);
@@ -28,11 +28,11 @@ void GenerateFeatures() {
 	int xSize, ySize, Square;
 	for (int model = 0; model < MODEL_NUM; model++) {
 		for (int factor = 1;; factor++) {
-			//ÅĞ¶ÏÌø³öÌõ¼ş Ğ¡ÓÚ×îĞ¡Ãæ»ı»òÕß³¬¹ıÍ¼Æ¬Ãæ»ı
-			xSize = factor * s[model];//¼ÆËã´°¿Ú³¤
-			ySize = factor * t[model];//¼ÆËã´°¿Ú¸ß
-			Square = xSize * ySize;//¼ÆËã´°¿ÚÃæ»ı
-			if (xSize > MAP_COLS || ySize > MAP_ROWS) {//Ãæ»ı¹ıĞ¡ »òÕß³¤¸ß³¬ÏŞ¾ÍÌø³öÑ­»·
+			//åˆ¤æ–­è·³å‡ºæ¡ä»¶ å°äºæœ€å°é¢ç§¯æˆ–è€…è¶…è¿‡å›¾ç‰‡é¢ç§¯
+			xSize = factor * s[model];//è®¡ç®—çª—å£é•¿
+			ySize = factor * t[model];//è®¡ç®—çª—å£é«˜
+			Square = xSize * ySize;//è®¡ç®—çª—å£é¢ç§¯
+			if (xSize > MAP_COLS || ySize > MAP_ROWS) {//é¢ç§¯è¿‡å° æˆ–è€…é•¿é«˜è¶…é™å°±è·³å‡ºå¾ªç¯
 				break;
 			}
 			else if (Square < minSquare[model])
@@ -217,14 +217,14 @@ Key_Value* CalFeatureValue(Feature& feature) {
 	return keyValues;
 }
 ostream& operator<<(ostream& os, Feature& feature) {
-	os << "Ä£ĞÍ: " << feature.model << endl
-		<< "·Å´ó±¶Êı: " << feature.factor << endl
-		<< "×óÉÏ½ÇÎ»ÖÃ: " << "(" << feature.X << "," << feature.Y << ")" << endl
-		<< "´íÎóÂÊ: " << feature.eRate << endl
-		<<"È¨ÖØÏµÊı: "<< log((1 - feature.eRate) / feature.eRate) / 2
-		<< "ãĞÖµ£º" << feature.threshold << endl
-		<< "·ûºÅ£º" << feature.p << endl
-		<< "±àºÅ£º" << feature.Number << endl;
+	os << "æ¨¡å‹: " << feature.model << endl
+		<< "æ”¾å¤§å€æ•°: " << feature.factor << endl
+		<< "å·¦ä¸Šè§’ä½ç½®: " << "(" << feature.X << "," << feature.Y << ")" << endl
+		<< "é”™è¯¯ç‡: " << feature.eRate << endl
+		<<"æƒé‡ç³»æ•°: "<< log((1 - feature.eRate) / feature.eRate) / 2
+		<< "é˜ˆå€¼ï¼š" << feature.threshold << endl
+		<< "ç¬¦å·ï¼š" << feature.p << endl
+		<< "ç¼–å·ï¼š" << feature.Number << endl;
 	return os;
 }
 ofstream& operator<<(ofstream& fout, Feature& feature) {
@@ -254,7 +254,7 @@ Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage) {
 			break;
 		}
 	}
-	cout << "µÚ"<< curWeakClassifierNum +1<<"¸ö"<<endl<<Features[index]<<endl;
+	cout << "ç¬¬"<< curWeakClassifierNum +1<<"ä¸ª"<<endl<<Features[index]<<endl;
 	fout << Features[index];
 	return Features[index];
 }
@@ -282,28 +282,31 @@ void UpdateSampleWeight(Feature& bestFeature) {
 	delete[] keyValues;
 }
 
-void DrawRectangle(Feature feature, Sample image) {
+void DrawRectangle(Feature &feature, Sample &image) {
 	switch (feature.model) {
 	case(0): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, count, count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, count, count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(1): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(2): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, count, 3 * count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, count, 3 * count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(3): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 3 * count, count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, 3 * count, count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(4): {
 		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, 2 * count), 1, 0, 1, 0);
+			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, 2 * count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	}
+	static int name = 0;
+	
+	imwrite("drawnimage\\"+ to_string(name) + ".jpg", image.img);
+	name += 1;
 }
-

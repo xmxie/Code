@@ -10,6 +10,8 @@
 #include<amp_math.h>
 #include <algorithm>
 #include<ctime>
+#include<stdlib.h> 
+#include<string>
 #include<iomanip>
 using namespace std;
 using namespace cv;
@@ -111,5 +113,5 @@ ofstream& operator<<(ofstream& fout, Feature& feature);
 void CalFeatureMinErrorRate();
 Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
-
+void DrawRectangle(Feature& feature,Sample&image)
 
