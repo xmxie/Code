@@ -151,19 +151,34 @@ void Train(Sample* samples) {
 
 }
 Sample* GetSamples(string& posPathName, string& negPathName) {
-	ifstream fin;
-	fin.open(pathName);
+	ifstream fin; 
+	Sample* imageSet = new Sample[__TP+__TN];
+	string imagePath;
+	fin.open(posPathName);
 	if (!fin.is_open())
 	{
 		cout << "File is not exit" << endl;
 		abort();
 	}
-	Sample* imageSet = new Sample[SAMPLE_NUM];
-	string imagePath;
-	for (int i = 0; i < SAMPLE_NUM; i++)
+	for (int i = 0; i < __TP ; i++)
 	{
 		fin >> imagePath >> imageSet[i].result;
 		imageSet[i].img = imread(imagePath, 0);
+		imageSet[i].weight = 1 / SAMPLE_NUM;
 	}
+	fin.close();
+	fin.open(negPathName);
+	if (!fin.is_open())
+	{
+		cout << "File is not exit" << endl;
+		abort();
+	}
+	for (int j = __TP ; j < __TP + __TN; j++)
+	{
+		fin >> imagePath >> imageSet[j].result;
+		imageSet[j].img = imread(imagePath, 0);
+		imageSet[j].weight = 1 / SAMPLE_NUM;
+	}
+	fin.close();
 	return imageSet;
 }
