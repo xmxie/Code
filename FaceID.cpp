@@ -299,28 +299,28 @@ void UpdateSampleWeight(Feature& bestFeature) {
 void DrawRectangle(Feature &feature, Sample &image) {
 	switch (feature.model) {
 	case(0): {
-		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, count, count), Scalar(0, 255, 0), 1, 1, 0);
+		for (int count = 1; count <= 2; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, feature.xSize, feature.factor * count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(1): {
-		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, count), Scalar(0, 255, 0), 1, 1, 0);
+		for (int count = 1; count <= 2; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, feature.factor * count, feature.ySize), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(2): {
-		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, count, 3 * count), Scalar(0, 255, 0), 1, 1, 0);
+		for (int count = 1; count <= 3; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, feature.xSize, feature.factor * count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(3): {
-		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 3 * count, count), Scalar(0, 255, 0), 1, 1, 0);
+		for (int count = 1; count <= 3; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, feature.factor * count, feature.ySize), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	case(4): {
-		for (int count = 1; count <= feature.factor; count++)
-			rectangle(image.img, Rect(feature.X, feature.Y, 2 * count, 2 * count), Scalar(0, 255, 0), 1, 1, 0);
+		for (int count = 1; count <= 2; count++)
+			rectangle(image.img, Rect(feature.X, feature.Y, feature.factor* count, feature.factor * count), Scalar(0, 255, 0), 1, 1, 0);
 		break; }
 	}
 	static int name = 0;
 	
-	imwrite("drawnimage\\"+ to_string(name) + ".jpg", image.img);
+	imwrite("drawnimage/"+ to_string(name) + ".jpg", image.img);
 	name += 1;
 }
