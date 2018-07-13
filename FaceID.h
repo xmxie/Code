@@ -16,7 +16,7 @@
 using namespace std;
 using namespace cv;
 #define Version_20
-
+#define USE
 
 #ifdef Version_20
 #define MAP_ROWS 20
@@ -116,4 +116,10 @@ Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage);
 void UpdateSampleWeight(Feature& bestFeature);
 void InitialSomeVariable();
 void DrawRectangle(Feature& feature, Sample& image);
+
+#ifdef USE
+void LoadClassifier();
+
+#endif // 
+
 
