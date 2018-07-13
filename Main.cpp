@@ -1,6 +1,7 @@
 #include"FaceID.h"
 #include"Global.h"
 
+using namespace std;
 int main() {
 	GetSamples();//获取样本
 	CalIntegralDiagrams();//计算样本积分图
