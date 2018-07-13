@@ -1,9 +1,13 @@
-#include"FaceID.h"
-#include"Global.h"
-
+#include<opencv2/opencv.hpp>
+#include<opencv2/imgproc/imgproc.hpp>
+using namespace cv;
 using namespace std;
 int main() {
-	GetSamples();//获取样本
-	CalIntegralDiagrams();//计算样本积分图
-	Train();//训练样本 期间会更新样本权重以及各强分类器中的弱分类器的权重
+	Mat test = imread("E:/C++/test.jpg");
+	Mat change;
+	namedWindow("test", WINDOW_NORMAL);
+	resize(test, change, Size(test.cols * 2, test.rows * 2), 0, 0);
+	imshow("test", test);
+	imshow("change", change);
+	waitKey(0);
 }
