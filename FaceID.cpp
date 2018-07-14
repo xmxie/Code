@@ -296,7 +296,35 @@ void UpdateSampleWeight(Feature& bestFeature) {
 	}
 	delete[] keyValues;
 }
+<<<<<<< HEAD
 void DrawRectangle(Feature &feature, Sample &image) {
+=======
+#endif // TRAIN
+#ifdef USE
+ifstream& operator>>(ifstream& fin, Feature& feature) {
+	double tmp;
+	fin >> feature.model
+		>> feature.factor
+		>> feature.X
+		>> feature.Y
+		>> feature.eRate
+		>> tmp
+		>> feature.threshold
+		>> feature.p;
+	feature.xSize = s[feature.model] * feature.factor;
+	feature.ySize = t[feature.model] * feature.factor;
+	return fin;
+}
+Sample* LoadAImage(string imagePathName) {
+	Sample* sample = new Sample;
+	sample->img = imread(imagePathName);
+	return sample;
+}
+void DrawRectangle(Feature &feature, Sample &sample) {
+	Sample image;
+	image.img = sample.img.clone();
+
+>>>>>>> 4539dd1fae8e1e09847bea076335d350450b875b
 	switch (feature.model) {
 	case(0): {
 		for (int count = 1; count <= 2; count++)
@@ -324,8 +352,25 @@ void DrawRectangle(Feature &feature, Sample &image) {
 	imwrite("drawnimage/" + to_string(name) + ".jpg", image.img);
 	name += 1;
 }
-
-void Rotate0(Feature feature, Sample &sample){
+void Rotate(Feature& feature, Sample& sample) {
+	switch (feature.model)
+	{
+	case 0:Rotate0(feature, sample);
+		break;
+	case 1:Rotate1(feature, sample);
+		break;
+	case 2:Rotate2(feature, sample);
+		break;
+	case 3:Rotate3(feature, sample);
+		break;
+	case 4:Rotate4(feature, sample);
+		break;
+	default:
+		break;
+	}
+}
+void Rotate0(Feature feature, Sample &sample)
+{
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 		const double angle = 180;
@@ -443,13 +488,13 @@ void Rotate4(Feature feature, Sample &sample){
 	Rotateimg;
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第二部分
-	ROI = img(Rect(times*(feature.X +feature.factor), times*（feature.Y+feature.factor), times*feature.factor, times*feature.factor));
+	ROI = img(Rect(times*(feature.X +feature.factor), times*(feature.Y+feature.factor), times*feature.factor, times*feature.factor));
 	center = Point2f(ROI.cols / 2, ROI.rows / 2);
 	Rotatemat = getRotationMatrix2D(center, angle, scale);
 	Rotateimg;
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第三部分
-	ROI = img(Rect(times*feature.X, times*（feature.Y + feature.factor), times*feature.factor, times*feature.factor));
+	ROI = img(Rect(times*feature.X, times*(feature.Y + feature.factor), times*feature.factor, times*feature.factor));
 	center = Point2f(ROI.cols / 2, ROI.rows / 2);
 	Rotatemat = getRotationMatrix2D(center, angle, scale);
 	Rotateimg;
@@ -476,7 +521,107 @@ void LoadClassifier() {
 	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++)
 		weakFactors[i] = weakFactors[i] / sum;
 }
+<<<<<<< HEAD
 
+=======
+void CalOneSampleIntegralDiagram(Sample* sample) {
+	sample->img.convertTo(sample->integralDiagram, CV_32SC1);
+	sample->integralDiagram.at<int>(0, 0) = sample->img.at<uchar>(0, 0);
+	for (int j = 1; j < MAP_ROWS; j++)//求出第一列的值
+		sample->integralDiagram.at<int>(j, 0) =
+		sample->integralDiagram.at<int>(j - 1, 0)
+		+ sample->img.at<uchar>(j, 0);
+	for (int i = 1; i < MAP_ROWS; i++)//求出第一行的值
+		sample->integralDiagram.at<int>(0, i) =
+		sample->integralDiagram.at<int>(0, i - 1)
+		+ sample->img.at<uchar>(0, i);
+	for (int j = 1; j < MAP_ROWS; j++) {
+		for (int i = 1; i < MAP_COLS; i++) {
+			sample->integralDiagram.at<int>(j, i) =
+				sample->integralDiagram.at<int>(j, i - 1)
+				+ sample->integralDiagram.at<int>(j - 1, i)
+				+ sample->img.at<uchar>(j, i)
+				- sample->integralDiagram.at<int>(j - 1, i - 1);
+		}
+	}
+}
+int CalSampleOneFeatureValue(Sample* sample,Feature& feature) {
+	int featureValue;
+	switch (feature.model)
+	{
+	case 0: {
+		int  X_Y, X_YF, X_YFF, XF_Y;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? sample->integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + feature.factor - 1) : 0;
+			X_YFF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor - 1) : 0;
+			XF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y) : 0;
+			featureValue = X_Y + 2 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + feature.factor - 1) + X_YFF - XF_Y
+				- 2 * X_YF - sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + 2 * feature.factor - 1);
+		}
+	}break;
+	case 1: {
+		int  X_Y, X_YF, XF_Y, XFF_Y;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? sample->integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + feature.factor - 1) : 0;
+			XF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y) : 0;
+			XFF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y) : 0;
+			featureValue = X_YF + 2 * XF_Y + sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y + feature.factor - 1)
+				- X_Y - 2 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + feature.factor - 1) - XFF_Y;
+		}
+	}break;
+	case 2: {
+		int  X_Y, X_YF, XF_Y, X_YFF, X_YFFF;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? sample->integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + feature.factor - 1) : 0;
+			XF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y) : 0;
+			X_YFF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor - 1) : 0;
+			X_YFFF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + 3 * feature.factor - 1) : 0;
+			featureValue = 3 * X_YF + XF_Y + X_YFFF + 3 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + 2 * feature.factor - 1)
+				- X_Y - 3 * X_YFF - sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + 3 * feature.factor - 1) - 3 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + feature.factor - 1);
+		}
+	}break;
+	case 3: {
+		int  X_Y, X_YF, XF_Y, XFF_Y, XFFF_Y;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? sample->integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + feature.factor - 1) : 0;
+			XF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y) : 0;
+			XFF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y) : 0;
+			XFFF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + 3 * feature.factor - 1, feature.Y) : 0;
+			featureValue = 3 * XF_Y + X_YF + XFFF_Y + 3 * sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y + feature.factor - 1)
+				- X_Y - 3 * XFF_Y - sample->integralDiagram.at<int >(feature.X + 3 * feature.factor - 1, feature.Y + feature.factor - 1) - 3 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + feature.factor - 1);
+		}
+	}break;
+	case 4: {
+		int  X_Y, X_YF, XF_Y, XFF_Y, X_YFF;
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+			X_Y = feature.X + feature.Y ? sample->integralDiagram.at<int >(feature.X, feature.Y) : 0;
+			X_YF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + feature.factor - 1) : 0;
+			XF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y) : 0;
+			XFF_Y = feature.Y ? sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y) : 0;
+			X_YFF = feature.X ? sample->integralDiagram.at<int >(feature.X, feature.Y + 2 * feature.factor - 1) : 0;
+			featureValue = 2 * XF_Y + 2 * X_YF + 2 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + 2 * feature.factor - 1) + 2 * sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y + feature.factor - 1)
+				- X_Y - X_YFF - XFF_Y - 4 * sample->integralDiagram.at<int >(feature.X + feature.factor - 1, feature.Y + feature.factor - 1) - sample->integralDiagram.at<int >(feature.X + 2 * feature.factor - 1, feature.Y + 2 * feature.factor - 1);
+		}
+	}break;
+	default:
+		break;
+	}
+	return featureValue;
+}
+void CalSampleAllFeatureValues(Sample* sample) {
+	for (int featureNO = 0; featureNO < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; featureNO++)
+		sampleFeatureValue[featureNO] = CalSampleOneFeatureValue(sample, weakFeatures[featureNO]);
+}
+void PredictResult() {
+	for (int featureNO = 0; featureNO < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; featureNO++)
+		if (predictResult[featureNO] = (sampleFeatureValue[featureNO] * weakFeatures[featureNO].p >= weakFeatures[featureNO].threshold*weakFeatures[featureNO].p))
+			P += weakFactors[featureNO];
+}
+>>>>>>> 4539dd1fae8e1e09847bea076335d350450b875b
 #endif // USE
 
 
