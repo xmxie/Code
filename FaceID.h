@@ -120,7 +120,8 @@ void Rotate0(Feature feature, Sample &sample);
 void Rotate1(Feature feature, Sample &sample);
 void Rotate2(Feature feature, Sample &sample);
 void Rotate3(Feature feature, Sample &sample);
-void Rotate4(Feature feature, Sample &sample);
+void Rotate4(Feature feature, Sample &sample); 
+Sample* compress(Sample* origin);
 
 #endif // TRAIN
 
