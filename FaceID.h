@@ -124,7 +124,8 @@ void Rotate0(Feature feature, Sample &sample);
 void Rotate1(Feature feature, Sample &sample);
 void Rotate2(Feature feature, Sample &sample);
 void Rotate3(Feature feature, Sample &sample);
-void Rotate4(Feature feature, Sample &sample);
+void Rotate4(Feature feature, Sample &sample); 
+Sample* compress(Sample* origin);
 ifstream& operator>>(ifstream& fin, Feature& feature);
 void LoadClassifier();
 Sample* LoadAImage(string imagePathName);
@@ -133,6 +134,6 @@ void DrawRectangle(Feature& feature, Sample& image);
 int CalSampleOneFeatureValue(Sample* sample, Feature& feature);
 void CalSampleAllFeatureValues(Sample* sample);
 void PredictResult();
-#endif // 
+#endif USE
 
 

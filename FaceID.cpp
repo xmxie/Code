@@ -374,14 +374,13 @@ void Rotate0(Feature feature, Sample &sample)
 	imwrite("Rotateimage/model0" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate1(Feature feature, Sample &sample)
-{
+void Rotate1(Feature feature, Sample &sample){
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
-	const double angle = 180;
-	const double scale = 1;
-	Mat ROI, Rotatemat, Rotateimg;
-	Point2f center;
+		const double angle = 180;
+		const double scale = 1;
+		Mat ROI, Rotatemat, Rotateimg;
+		Point2f center;
 	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
 	center = Point2f(ROI.cols / 2, ROI.rows / 2);
 	Rotatemat = getRotationMatrix2D(center, angle, scale);
@@ -397,14 +396,13 @@ void Rotate1(Feature feature, Sample &sample)
 	imwrite("Rotateimage/model1" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate2(Feature feature, Sample &sample)
-{
+void Rotate2(Feature feature, Sample &sample){
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
-	const double angle = 180;
-	const double scale = 1;
-	Mat ROI, Rotatemat, Rotateimg;
-	Point2f center;
+		const double angle = 180;
+		const double scale = 1;
+		Mat ROI, Rotatemat, Rotateimg;
+		Point2f center;
 	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
 	center = Point2f(ROI.cols / 2, ROI.rows / 2);
 	Rotatemat = getRotationMatrix2D(center, angle, scale);
@@ -426,8 +424,7 @@ void Rotate2(Feature feature, Sample &sample)
 	imwrite("Rotateimage/model2" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate3(Feature feature, Sample &sample)
-{
+void Rotate3(Feature feature, Sample &sample){
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 	const double angle = 180;
@@ -455,8 +452,7 @@ void Rotate3(Feature feature, Sample &sample)
 	imwrite("Rotateimage/model3" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate4(Feature feature, Sample &sample)
-{
+void Rotate4(Feature feature, Sample &sample){
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 	const double angle = 180;
@@ -490,6 +486,13 @@ void Rotate4(Feature feature, Sample &sample)
 	imwrite("Rotateimage/model4" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
+Sample* compress(Sample *origin) {
+	Sample *less = new Sample;
+	resize(origin->img, less->img, Size(20, 20));
+	return less;
+}
+#endif // TRAIN
+#ifdef USE
 void LoadClassifier() {
 	ifstream fin(classifierPathName.c_str());
 	double sum = 0;
