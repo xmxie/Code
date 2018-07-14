@@ -102,15 +102,13 @@ typedef struct {
 		|***|	|
 		---------
 */
+ostream& operator<<(ostream& os, Feature& feature);
 #ifdef TRAIN
 void GetSamples();//读入样本图
 void Train();//训练
 Key_Value* CalFeatureValue(Feature& feature);
 void CalIntegralDiagrams();//计算样本的积分图 并返回一个矩阵
 void GenerateFeatures();
-ostream& operator<<(ostream& os, Feature& feature);
-ofstream& operator<<(ofstream& fout, Feature& feature);
-ifstream& operator>>(ifstream& fin, Feature& feature);
 void CalFeatureMinErrorRate();
 Feature& StoreClassifier(ofstream& fout, int& curWeakClassifierNum, int stage);
 void UpdateSampleWeight(Feature& bestFeature);
@@ -120,15 +118,26 @@ void Rotate0(Feature feature, Sample &sample);
 void Rotate1(Feature feature, Sample &sample);
 void Rotate2(Feature feature, Sample &sample);
 void Rotate3(Feature feature, Sample &sample);
+<<<<<<< HEAD
 void Rotate4(Feature feature, Sample &sample); 
 Sample* compress(Sample* origin);
 
+=======
+void Rotate4(Feature feature, Sample &sample);
+ofstream& operator<<(ofstream& fout, Feature& feature);
+>>>>>>> 52a3de6b8443be40920d3aa00cfe8cb9b8d879c3
 #endif // TRAIN
 
 
 #ifdef USE
+ifstream& operator>>(ifstream& fin, Feature& feature);
 void LoadClassifier();
-
+Sample* LoadAImage(string imagePathName);
+void CalOneSampleIntegralDiagram(Sample* sample);
+void DrawRectangle(Feature& feature, Sample& image);
+int CalSampleOneFeatureValue(Sample* sample, Feature& feature);
+void CalSampleAllFeatureValues(Sample* sample);
+void PredictResult();
 #endif // 
 
 
