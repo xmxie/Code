@@ -16,7 +16,7 @@
 using namespace std;
 using namespace cv;
 #define Version_20
-
+#define USE
 
 #ifdef Version_20
 #define MAP_ROWS 20
@@ -102,7 +102,7 @@ typedef struct {
 		|***|	|
 		---------
 */
-
+#ifdef TRAIN
 void GetSamples();//读入样本图
 void Train();//训练
 Key_Value* CalFeatureValue(Feature& feature);
@@ -110,8 +110,24 @@ void CalIntegralDiagrams();//计算样本的积分图 并返回一个矩阵
 void GenerateFeatures();
 ostream& operator<<(ostream& os, Feature& feature);
 ofstream& operator<<(ofstream& fout, Feature& feature);
+ifstream& operator>>(ifstream& fin, Feature& feature);
 void CalFeatureMinErrorRate();
-Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage);
+Feature& StoreClassifier(ofstream& fout, int& curWeakClassifierNum, int stage);
 void UpdateSampleWeight(Feature& bestFeature);
-void DrawRectangle(Feature& feature,Sample&image)
+void InitialSomeVariable();
+void DrawRectangle(Feature& feature, Sample& image);
+void Rotate0(Feature feature, Sample &sample);
+void Rotate1(Feature feature, Sample &sample);
+void Rotate2(Feature feature, Sample &sample);
+void Rotate3(Feature feature, Sample &sample);
+void Rotate4(Feature feature, Sample &sample);
+
+#endif // TRAIN
+
+
+#ifdef USE
+void LoadClassifier();
+
+#endif // 
+
 
