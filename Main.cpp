@@ -23,9 +23,12 @@ int main() {
 	if(P>0.5)
 		for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++) 
 			if (predictResult[i]) {
+				int Delta = weakFeatures[i].p*(sampleFeatureValue[i] - weakFeatures[i].threshold);
+				Delta = Delta / (weakFeatures[i].xSize*weakFeatures[i].ySize);
 				cout << "NO:" << NO++ << endl;
 				cout << "Threshold: " << weakFeatures[i].threshold*weakFeatures[i].p << endl;
 				cout << "CalValue: " << sampleFeatureValue[i] * weakFeatures[i].p << endl;
+				cout << "Delta/Square: " << Delta << endl;
 				cout << endl;
 				Rotate(weakFeatures[i], *bigSample);
 			}
