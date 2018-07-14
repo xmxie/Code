@@ -300,8 +300,7 @@ ifstream& operator>>(ifstream& fin, Feature& feature) {
 }
 Sample* LoadAImage(string imagePathName) {
 	Sample* sample = new Sample;
-	sample->img = imread(imagePathName, 0);
-	CalOneSampleIntegralDiagram(sample);
+	sample->img = imread(imagePathName);
 	return sample;
 }
 void DrawRectangle(Feature &feature, Sample &sample) {
