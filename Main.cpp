@@ -1,5 +1,5 @@
-#include<opencv2/opencv.hpp>
-#include<opencv2/imgproc/imgproc.hpp>
+#include"FaceID.h"
+#include"Global.h"
 using namespace cv;
 using namespace std;
 int main() {
@@ -19,8 +19,8 @@ int main() {
 	//DrawRectangle(Factor[0][5], samples[0]);
 	*/
 	LoadClassifier();
-	//Sample* sample = LoadAImage("Code/pos/0002_j_01204.jpg");
-	Sample* sample = LoadAImage("Code/neg/000009.jpg");
+	Sample* sample = LoadAImage("Code/pos/0002_j_01204.jpg");
+	//Sample* sample = LoadAImage("Code/neg/000009.jpg");
 	CalSampleAllFeatureValues(sample);
 	PredictResult();
 	cout << P << endl;
@@ -31,7 +31,7 @@ int main() {
 			cout << "Threshold: " << weakFeatures[i].threshold*weakFeatures[i].p << endl;
 			cout << "CalValue: " << sampleFeatureValue[i] * weakFeatures[i].p << endl;
 			cout << endl;
-			DrawRectangle(weakFeatures[i], *sample);
+			Rotate(weakFeatures[i], *sample);
 		}
 	}
 	cin.get();

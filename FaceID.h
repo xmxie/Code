@@ -113,17 +113,18 @@ void CalFeatureMinErrorRate();
 Feature& StoreClassifier(ofstream& fout, int& curWeakClassifierNum, int stage);
 void UpdateSampleWeight(Feature& bestFeature);
 void InitialSomeVariable();
-void DrawRectangle(Feature& feature, Sample& image);
-void Rotate0(Feature feature, Sample &sample);
-void Rotate1(Feature feature, Sample &sample);
-void Rotate2(Feature feature, Sample &sample);
-void Rotate3(Feature feature, Sample &sample);
-void Rotate4(Feature feature, Sample &sample);
 ofstream& operator<<(ofstream& fout, Feature& feature);
 #endif // TRAIN
 
 
 #ifdef USE
+void DrawRectangle(Feature& feature, Sample& image);
+void Rotate(Feature& feature, Sample& sample);
+void Rotate0(Feature feature, Sample &sample);
+void Rotate1(Feature feature, Sample &sample);
+void Rotate2(Feature feature, Sample &sample);
+void Rotate3(Feature feature, Sample &sample);
+void Rotate4(Feature feature, Sample &sample);
 ifstream& operator>>(ifstream& fin, Feature& feature);
 void LoadClassifier();
 Sample* LoadAImage(string imagePathName);

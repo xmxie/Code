@@ -298,42 +298,11 @@ ifstream& operator>>(ifstream& fin, Feature& feature) {
 	feature.ySize = t[feature.model] * feature.factor;
 	return fin;
 }
-void LoadClassifier() {
-	ifstream fin(classifierPathName.c_str());
-	double sum = 0;
-	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++) {
-		fin >> weakFeatures[i];
-		sum += (weakFactors[i] = log((1 - weakFeatures[i].eRate) / weakFeatures[i].eRate) / 2);
-	}
-	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++)
-		weakFactors[i] = weakFactors[i] / sum;
-}
 Sample* LoadAImage(string imagePathName) {
 	Sample* sample = new Sample;
 	sample->img = imread(imagePathName, 0);
 	CalOneSampleIntegralDiagram(sample);
 	return sample;
-}
-void CalOneSampleIntegralDiagram(Sample* sample) {
-	sample->img.convertTo(sample->integralDiagram, CV_32SC1);
-	sample->integralDiagram.at<int>(0, 0) = sample->img.at<uchar>(0, 0);
-	for (int j = 1; j < MAP_ROWS; j++)//求出第一列的值
-		sample->integralDiagram.at<int>(j, 0) =
-		sample->integralDiagram.at<int>(j - 1, 0)
-		+ sample->img.at<uchar>(j, 0);
-	for (int i = 1; i < MAP_ROWS; i++)//求出第一行的值
-		sample->integralDiagram.at<int>(0, i) =
-		sample->integralDiagram.at<int>(0, i - 1)
-		+ sample->img.at<uchar>(0, i);
-	for (int j = 1; j < MAP_ROWS; j++) {
-		for (int i = 1; i < MAP_COLS; i++) {
-			sample->integralDiagram.at<int>(j, i) =
-				sample->integralDiagram.at<int>(j, i - 1)
-				+ sample->integralDiagram.at<int>(j - 1, i)
-				+ sample->img.at<uchar>(j, i)
-				- sample->integralDiagram.at<int>(j - 1, i - 1);
-		}
-	}
 }
 void DrawRectangle(Feature &feature, Sample &sample) {
 	Sample image;
@@ -366,7 +335,23 @@ void DrawRectangle(Feature &feature, Sample &sample) {
 	imwrite("drawnimage/" + to_string(name) + ".jpg", image.img);
 	name += 1;
 }
-
+void Rotate(Feature& feature, Sample& sample) {
+	switch (feature.model)
+	{
+	case 0:Rotate0(feature, sample);
+		break;
+	case 1:Rotate1(feature, sample);
+		break;
+	case 2:Rotate2(feature, sample);
+		break;
+	case 3:Rotate3(feature, sample);
+		break;
+	case 4:Rotate4(feature, sample);
+		break;
+	default:
+		break;
+	}
+}
 void Rotate0(Feature feature, Sample &sample)
 {
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
@@ -387,7 +372,7 @@ void Rotate0(Feature feature, Sample &sample)
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第二部分
 	static int name = 1;
-	imwrite("Rotateimage/model0" + to_string(name) + ".jpg", image.img);
+	imwrite("Rotateimage/model0" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
 void Rotate1(Feature feature, Sample &sample)
@@ -410,7 +395,7 @@ void Rotate1(Feature feature, Sample &sample)
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第二部分
 	static int name = 101;
-	imwrite("Rotateimage/model1" + to_string(name) + ".jpg", image.img);
+	imwrite("Rotateimage/model1" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
 void Rotate2(Feature feature, Sample &sample)
@@ -439,7 +424,7 @@ void Rotate2(Feature feature, Sample &sample)
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第三部分
 	static int name = 201;
-	imwrite("Rotateimage/model2" + to_string(name) + ".jpg", image.img);
+	imwrite("Rotateimage/model2" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
 void Rotate3(Feature feature, Sample &sample)
@@ -468,7 +453,7 @@ void Rotate3(Feature feature, Sample &sample)
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第三部分
 	static int name = 301;
-	imwrite("Rotateimage/model3" + to_string(name) + ".jpg", image.img);
+	imwrite("Rotateimage/model3" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
 void Rotate4(Feature feature, Sample &sample)
@@ -490,24 +475,22 @@ void Rotate4(Feature feature, Sample &sample)
 	Rotateimg;
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第二部分
-	ROI = img(Rect(times*(feature.X +feature.factor), times*（feature.Y+feature.factor), times*feature.factor, times*feature.factor));
+	ROI = img(Rect(times*(feature.X +feature.factor), times*(feature.Y+feature.factor), times*feature.factor, times*feature.factor));
 	center = Point2f(ROI.cols / 2, ROI.rows / 2);
 	Rotatemat = getRotationMatrix2D(center, angle, scale);
 	Rotateimg;
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第三部分
-	ROI = img(Rect(times*feature.X, times*（feature.Y + feature.factor), times*feature.factor, times*feature.factor));
+	ROI = img(Rect(times*feature.X, times*(feature.Y + feature.factor), times*feature.factor, times*feature.factor));
 	center = Point2f(ROI.cols / 2, ROI.rows / 2);
 	Rotatemat = getRotationMatrix2D(center, angle, scale);
 	Rotateimg;
 	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
 	Rotateimg.copyTo(ROI);//旋转第四部分
 	static int name = 401;
-	imwrite("Rotateimage/model4" + to_string(name) + ".jpg", image.img);
+	imwrite("Rotateimage/model4" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-#endif // TRAIN
-#ifdef USE
 void LoadClassifier() {
 	ifstream fin(classifierPathName.c_str());
 	double sum = 0;
@@ -517,6 +500,27 @@ void LoadClassifier() {
 	}
 	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++)
 		weakFactors[i] = weakFactors[i] / sum;
+}
+void CalOneSampleIntegralDiagram(Sample* sample) {
+	sample->img.convertTo(sample->integralDiagram, CV_32SC1);
+	sample->integralDiagram.at<int>(0, 0) = sample->img.at<uchar>(0, 0);
+	for (int j = 1; j < MAP_ROWS; j++)//求出第一列的值
+		sample->integralDiagram.at<int>(j, 0) =
+		sample->integralDiagram.at<int>(j - 1, 0)
+		+ sample->img.at<uchar>(j, 0);
+	for (int i = 1; i < MAP_ROWS; i++)//求出第一行的值
+		sample->integralDiagram.at<int>(0, i) =
+		sample->integralDiagram.at<int>(0, i - 1)
+		+ sample->img.at<uchar>(0, i);
+	for (int j = 1; j < MAP_ROWS; j++) {
+		for (int i = 1; i < MAP_COLS; i++) {
+			sample->integralDiagram.at<int>(j, i) =
+				sample->integralDiagram.at<int>(j, i - 1)
+				+ sample->integralDiagram.at<int>(j - 1, i)
+				+ sample->img.at<uchar>(j, i)
+				- sample->integralDiagram.at<int>(j - 1, i - 1);
+		}
+	}
 }
 int CalSampleOneFeatureValue(Sample* sample,Feature& feature) {
 	int featureValue;
