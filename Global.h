@@ -18,6 +18,9 @@ extern double curTN;
 extern string classifierPathName;
 extern double weakFactors[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
 extern Feature weakFeatures[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
+extern int sampleFeatureValue[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
+extern bool predictResult[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
+extern double P;
 #endif // USE
 
 extern string posPathName;

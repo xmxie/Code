@@ -18,6 +18,7 @@ using namespace cv;
 #define Version_20
 #define USE
 
+
 #ifdef Version_20
 #define MAP_ROWS 20
 #define MAP_COLS 20
@@ -102,24 +103,31 @@ typedef struct {
 		|***|	|
 		---------
 */
-
+ostream& operator<<(ostream& os, Feature& feature);
+#ifdef TRAIN
 void GetSamples();//读入样本图
 void Train();//训练
 Key_Value* CalFeatureValue(Feature& feature);
 void CalIntegralDiagrams();//计算样本的积分图 并返回一个矩阵
 void GenerateFeatures();
-ostream& operator<<(ostream& os, Feature& feature);
-ofstream& operator<<(ofstream& fout, Feature& feature);
-ifstream& operator>>(ifstream& fin, Feature& feature);
 void CalFeatureMinErrorRate();
-Feature& StoreClassifier(ofstream& fout,int& curWeakClassifierNum,int stage);
+Feature& StoreClassifier(ofstream& fout, int& curWeakClassifierNum, int stage);
 void UpdateSampleWeight(Feature& bestFeature);
 void InitialSomeVariable();
-void DrawRectangle(Feature& feature, Sample& image);
+ofstream& operator<<(ofstream& fout, Feature& feature);
+
+#endif // TRAIN
+
 
 #ifdef USE
+ifstream& operator>>(ifstream& fin, Feature& feature);
 void LoadClassifier();
-
+Sample* LoadAImage(string imagePathName);
+void CalOneSampleIntegralDiagram(Sample* sample);
+void DrawRectangle(Feature& feature, Sample& image);
+int CalSampleOneFeatureValue(Sample* sample, Feature& feature);
+void CalSampleAllFeatureValues(Sample* sample);
+void PredictResult();
 #endif // 
 
 

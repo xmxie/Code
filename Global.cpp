@@ -17,6 +17,9 @@ double curTN=(double)__TN / SAMPLE_NUM;
 string classifierPathName = "Code/classifiers.txt";
 double weakFactors[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
 Feature weakFeatures[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
+int sampleFeatureValue[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
+bool predictResult[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
+double P=0;
 #endif // USE
 
 
