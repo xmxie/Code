@@ -24,7 +24,6 @@ ofstream& operator<<(ofstream& fout, Feature& feature) {
 		<< endl;
 	return fout;
 }
-
 void CalIntegralDiagrams() {
 	for (int num = 0; num < SAMPLE_NUM; num++) {
 		//samples[num].integralDiagram = samples[num].img.clone();
@@ -283,7 +282,6 @@ void UpdateSampleWeight(Feature& bestFeature) {
 	}
 	delete[] keyValues;
 }
-
 #endif // TRAIN
 #ifdef USE
 ifstream& operator>>(ifstream& fin, Feature& feature) {
@@ -340,6 +338,7 @@ void CalOneSampleIntegralDiagram(Sample* sample) {
 void DrawRectangle(Feature &feature, Sample &sample) {
 	Sample image;
 	image.img = sample.img.clone();
+
 	switch (feature.model) {
 	case(0): {
 		for (int count = 1; count <= 2; count++)
@@ -366,6 +365,158 @@ void DrawRectangle(Feature &feature, Sample &sample) {
 
 	imwrite("drawnimage/" + to_string(name) + ".jpg", image.img);
 	name += 1;
+}
+
+void Rotate0(Feature feature, Sample &sample)
+{
+	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
+	Mat img(sample.img);
+		const double angle = 180;
+		const double scale = 1;
+		Mat ROI, Rotatemat, Rotateimg;
+		Point2f center;
+	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第一部分
+	ROI = img(Rect(times*feature.X, times*(feature.Y + feature.factor), times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第二部分
+	static int name = 1;
+	imwrite("Rotateimage/model0" + to_string(name) + ".jpg", image.img);
+	name += 1;
+}
+void Rotate1(Feature feature, Sample &sample)
+{
+	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
+	Mat img(sample.img);
+	const double angle = 180;
+	const double scale = 1;
+	Mat ROI, Rotatemat, Rotateimg;
+	Point2f center;
+	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第一部分
+	ROI = img(Rect(times*(feature.X + feature.factor), times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第二部分
+	static int name = 101;
+	imwrite("Rotateimage/model1" + to_string(name) + ".jpg", image.img);
+	name += 1;
+}
+void Rotate2(Feature feature, Sample &sample)
+{
+	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
+	Mat img(sample.img);
+	const double angle = 180;
+	const double scale = 1;
+	Mat ROI, Rotatemat, Rotateimg;
+	Point2f center;
+	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第一部分
+	ROI = img(Rect(times*feature.X, times*(feature.Y + feature.factor), times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第二部分
+	ROI = img(Rect(times*feature.X, times*(feature.Y + 2*feature.factor), times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第三部分
+	static int name = 201;
+	imwrite("Rotateimage/model2" + to_string(name) + ".jpg", image.img);
+	name += 1;
+}
+void Rotate3(Feature feature, Sample &sample)
+{
+	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
+	Mat img(sample.img);
+	const double angle = 180;
+	const double scale = 1;
+	Mat ROI, Rotatemat, Rotateimg;
+	Point2f center;
+	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第一部分
+	ROI = img(Rect(times*(feature.X + feature.factor), times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第二部分
+	ROI = img(Rect(times*(feature.X + 2*feature.factor), times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第三部分
+	static int name = 301;
+	imwrite("Rotateimage/model3" + to_string(name) + ".jpg", image.img);
+	name += 1;
+}
+void Rotate4(Feature feature, Sample &sample)
+{
+	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
+	Mat img(sample.img);
+	const double angle = 180;
+	const double scale = 1;
+	Mat ROI, Rotatemat, Rotateimg;
+	Point2f center;
+	ROI = img(Rect(times*feature.X, times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第一部分
+	ROI = img(Rect(times*(feature.X + feature.factor), times*feature.Y, times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第二部分
+	ROI = img(Rect(times*(feature.X +feature.factor), times*（feature.Y+feature.factor), times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第三部分
+	ROI = img(Rect(times*feature.X, times*（feature.Y + feature.factor), times*feature.factor, times*feature.factor));
+	center = Point2f(ROI.cols / 2, ROI.rows / 2);
+	Rotatemat = getRotationMatrix2D(center, angle, scale);
+	Rotateimg;
+	warpAffine(ROI, Rotateimg, Rotatemat, ROI.size());
+	Rotateimg.copyTo(ROI);//旋转第四部分
+	static int name = 401;
+	imwrite("Rotateimage/model4" + to_string(name) + ".jpg", image.img);
+	name += 1;
+}
+#endif // TRAIN
+#ifdef USE
+void LoadClassifier() {
+	ifstream fin(classifierPathName.c_str());
+	double sum = 0;
+	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++) {
+		fin >> weakFeatures[i];
+		sum += (weakFactors[i] = log((1 - weakFeatures[i].eRate) / weakFeatures[i].eRate) / 2);
+	}
+	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++)
+		weakFactors[i] = weakFactors[i] / sum;
 }
 int CalSampleOneFeatureValue(Sample* sample,Feature& feature) {
 	int featureValue;

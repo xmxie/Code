@@ -1,11 +1,11 @@
-#include"FaceID.h"
-#include"Global.h"
-
+#include<opencv2/opencv.hpp>
+#include<opencv2/imgproc/imgproc.hpp>
+using namespace cv;
 using namespace std;
 int main() {
 	/*
-	GetSamples();//»ñÈ¡Ñù±¾
-	CalIntegralDiagrams();//¼ÆËãÑù±¾»ı·ÖÍ¼
+	GetSamples();//è·å–æ ·æœ¬
+	CalIntegralDiagrams();//è®¡ç®—æ ·æœ¬ç§¯åˆ†å›¾
 	InitialSomeVariable();
 	GenerateFeatures();
 	*/
@@ -35,5 +35,5 @@ int main() {
 		}
 	}
 	cin.get();
-	//Train();//ÑµÁ·Ñù±¾ ÆÚ¼ä»á¸üĞÂÑù±¾È¨ÖØÒÔ¼°¸÷Ç¿·ÖÀàÆ÷ÖĞµÄÈõ·ÖÀàÆ÷µÄÈ¨ÖØ
+	//Train();//è®­ç»ƒæ ·æœ¬ æœŸé—´ä¼šæ›´æ–°æ ·æœ¬æƒé‡ä»¥åŠå„å¼ºåˆ†ç±»å™¨ä¸­çš„å¼±åˆ†ç±»å™¨çš„æƒé‡
 }

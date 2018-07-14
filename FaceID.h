@@ -18,7 +18,6 @@ using namespace cv;
 #define Version_20
 #define USE
 
-
 #ifdef Version_20
 #define MAP_ROWS 20
 #define MAP_COLS 20
@@ -114,8 +113,13 @@ void CalFeatureMinErrorRate();
 Feature& StoreClassifier(ofstream& fout, int& curWeakClassifierNum, int stage);
 void UpdateSampleWeight(Feature& bestFeature);
 void InitialSomeVariable();
+void DrawRectangle(Feature& feature, Sample& image);
+void Rotate0(Feature feature, Sample &sample);
+void Rotate1(Feature feature, Sample &sample);
+void Rotate2(Feature feature, Sample &sample);
+void Rotate3(Feature feature, Sample &sample);
+void Rotate4(Feature feature, Sample &sample);
 ofstream& operator<<(ofstream& fout, Feature& feature);
-
 #endif // TRAIN
 
 
