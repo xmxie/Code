@@ -1,8 +1,10 @@
 #include"FaceID.h"
-int weakClassifierNum[HARD_CLASSIFIER_STAGES] = { 20 };
-int minSquare[MODEL_NUM] = { 16,16,24,24,32 };
+int weakClassifierNum[HARD_CLASSIFIER_STAGES] = { 30 };
+int minSquare[MODEL_NUM] = { 3,3,4,4,5 };
+//int minSquare[MODEL_NUM] = {  };
 int s[MODEL_NUM] = { 1,2,1,3,2 };
 int t[MODEL_NUM] = { 2,1,3,1,2 };
+string classifierPathName = "Code/classifiers.txt";
 #ifdef TRAIN
 Feature** Factor;//各级强分类器中各弱分类器的当时副本
 Sample* samples;//样本数组
@@ -13,7 +15,6 @@ double curTP=(double)__TP / SAMPLE_NUM;
 double curTN=(double)__TN / SAMPLE_NUM;
 #endif // !TRAIN
 #ifdef USE
-string classifierPathName = "Code/classifiers.txt";
 double weakFactors[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
 Feature weakFeatures[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
 int sampleFeatureValue[MAX_WEAK_CLASSIFIER_NUM_PER_HARD];
