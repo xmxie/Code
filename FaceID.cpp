@@ -106,34 +106,28 @@ void Train() {
 			UpdateSampleWeight(CurBestFeature);
 		}
 	}
-
-	cin.get();
 }
 void GetSamples() {
 	ifstream fin;
 	samples = new Sample[__TP + __TN];
 	string imagePath;
 	fin.open(posPathName);
-	if (!fin.is_open())
-	{
+	if (!fin.is_open()){
 		cout << "File is not exit" << endl;
 		abort();
 	}
-	for (int i = 0; i < __TP; i++)
-	{
+	for (int i = 0; i < __TP; i++){
 		fin >> imagePath >> samples[i].result;
 		samples[i].img = imread(imagePath, 0);
 		samples[i].weight = 1.0 / SAMPLE_NUM;
 	}
 	fin.close();
 	fin.open(negPathName);
-	if (!fin.is_open())
-	{
+	if (!fin.is_open()){
 		cout << "File is not exit" << endl;
 		abort();
 	}
-	for (int j = __TP; j < __TP + __TN; j++)
-	{
+	for (int j = __TP; j < __TP + __TN; j++){
 		fin >> imagePath >> samples[j].result;
 		samples[j].img = imread(imagePath, 0);
 		samples[j].weight = 1.0 / SAMPLE_NUM;
@@ -142,8 +136,7 @@ void GetSamples() {
 }
 Key_Value* CalFeatureValue(Feature& feature) {
 	Key_Value* keyValues = new Key_Value[SAMPLE_NUM];
-	switch (feature.model)
-	{
+	switch (feature.model){
 	case 0: {
 		int  X_Y, X_YF, X_YFF, XF_Y;
 		for (int i = 0; i < SAMPLE_NUM; i++) {
@@ -296,9 +289,6 @@ void UpdateSampleWeight(Feature& bestFeature) {
 	}
 	delete[] keyValues;
 }
-<<<<<<< HEAD
-void DrawRectangle(Feature &feature, Sample &image) {
-=======
 #endif // TRAIN
 #ifdef USE
 ifstream& operator>>(ifstream& fin, Feature& feature) {
@@ -317,14 +307,13 @@ ifstream& operator>>(ifstream& fin, Feature& feature) {
 }
 Sample* LoadAImage(string imagePathName) {
 	Sample* sample = new Sample;
-	sample->img = imread(imagePathName);
+	sample->img = imread(imagePathName,0);
 	return sample;
 }
 void DrawRectangle(Feature &feature, Sample &sample) {
 	Sample image;
 	image.img = sample.img.clone();
 
->>>>>>> 4539dd1fae8e1e09847bea076335d350450b875b
 	switch (feature.model) {
 	case(0): {
 		for (int count = 1; count <= 2; count++)
@@ -369,8 +358,10 @@ void Rotate(Feature& feature, Sample& sample) {
 		break;
 	}
 }
-void Rotate0(Feature feature, Sample &sample)
+void Rotate0(Feature feature, Sample &_sample)
 {
+	Sample sample;
+	sample.img = _sample.img.clone();
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 		const double angle = 180;
@@ -392,7 +383,9 @@ void Rotate0(Feature feature, Sample &sample)
 	imwrite("Rotateimage/model0" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate1(Feature feature, Sample &sample){
+void Rotate1(Feature feature, Sample &_sample){
+	Sample sample;
+	sample.img = _sample.img.clone();
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 		const double angle = 180;
@@ -414,7 +407,9 @@ void Rotate1(Feature feature, Sample &sample){
 	imwrite("Rotateimage/model1" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate2(Feature feature, Sample &sample){
+void Rotate2(Feature feature, Sample &_sample){
+	Sample sample;
+	sample.img = _sample.img.clone();
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 		const double angle = 180;
@@ -442,7 +437,9 @@ void Rotate2(Feature feature, Sample &sample){
 	imwrite("Rotateimage/model2" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate3(Feature feature, Sample &sample){
+void Rotate3(Feature feature, Sample &_sample){
+	Sample sample;
+	sample.img = _sample.img.clone();
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 	const double angle = 180;
@@ -470,7 +467,9 @@ void Rotate3(Feature feature, Sample &sample){
 	imwrite("Rotateimage/model3" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-void Rotate4(Feature feature, Sample &sample){
+void Rotate4(Feature feature, Sample &_sample){
+	Sample sample;
+	sample.img = _sample.img.clone();
 	int times = (sample.img.rows / MAP_ROWS);//输出图：参数图
 	Mat img(sample.img);
 	const double angle = 180;
@@ -504,13 +503,11 @@ void Rotate4(Feature feature, Sample &sample){
 	imwrite("Rotateimage/model4" + to_string(name) + ".jpg", sample.img);
 	name += 1;
 }
-Sample* compress(Sample *origin) {
+Sample* Compress(Sample *origin) {
 	Sample *less = new Sample;
 	resize(origin->img, less->img, Size(20, 20));
 	return less;
 }
-#endif // TRAIN
-#ifdef USE5
 void LoadClassifier() {
 	ifstream fin(classifierPathName.c_str());
 	double sum = 0;
@@ -521,9 +518,6 @@ void LoadClassifier() {
 	for (int i = 0; i < MAX_WEAK_CLASSIFIER_NUM_PER_HARD; i++)
 		weakFactors[i] = weakFactors[i] / sum;
 }
-<<<<<<< HEAD
-
-=======
 void CalOneSampleIntegralDiagram(Sample* sample) {
 	sample->img.convertTo(sample->integralDiagram, CV_32SC1);
 	sample->integralDiagram.at<int>(0, 0) = sample->img.at<uchar>(0, 0);
@@ -621,7 +615,6 @@ void PredictResult() {
 		if (predictResult[featureNO] = (sampleFeatureValue[featureNO] * weakFeatures[featureNO].p >= weakFeatures[featureNO].threshold*weakFeatures[featureNO].p))
 			P += weakFactors[featureNO];
 }
->>>>>>> 4539dd1fae8e1e09847bea076335d350450b875b
 #endif // USE
 
 
